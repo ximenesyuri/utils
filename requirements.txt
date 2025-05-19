@@ -1,0 +1,4 @@
+requests
+pyyaml
+pixels2svg
+Pillow
