@@ -2,6 +2,7 @@ import shutil
 import filecmp
 import tempfile
 import os
+import sys
 import time
 import subprocess
 from pathlib import Path
@@ -12,7 +13,6 @@ class cmd:
         env = os.environ.copy()
         if envs:
             env.update(envs)
-
         if terminate:
             try:
                 process = subprocess.run(
@@ -45,22 +45,28 @@ class cmd:
                 print(f"Error in Popen: {e}", file=sys.stderr)
                 return str(e), None
 
-    def lsf(directory, ext=None):
+    def sleep(seconds=1):
+        return time.sleep(seconds)
+
+    def exit(code=0):
+        return sys.exit(code)
+
+    def lsf(dir='', extension=None):
         try:
-            if ext:
-                return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)) and f.endswith(ext)]
-            return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+            if extension:     
+                return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f)) and f.endswith(ext)]
+            return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
         except Exception as e:
             print(f"Error: {e}")
             return []
 
-    def lsd(directory, exclude=None):
+    def lsd(dir, exclude=None):
         try:
             if exclude is None:
                 exclude = []
             return [
-                d for d in os.listdir(directory)
-                if os.path.isdir(os.path.join(directory, d)) and d not in exclude
+                d for d in os.listdir(dir)
+                if os.path.isdir(os.path.join(dir, d)) and d not in exclude
             ]
         except Exception as e:
             print(f"Error: {e}")
@@ -74,23 +80,31 @@ class cmd:
             else:
                 os.remove(path_to_remove)
 
-    def mkd(path):
+    def mkdir(path):
         path_to_create = Path(path)
         path_to_create.mkdir(parents=True, exist_ok=True)
 
-    def mkf(path):
+    def touch(path):
         path_to_create = Path(path)
         path_to_create.touch(exist_ok=True)
 
-    def mktemp():
-        return tempfile.mkdtemp()
+    class mktemp:
+        def dir():
+            temp_dir = tempfile.mkdtemp()
+            cmd.mkdir(temp_dir)
+            return temp_dir
 
-    def cpf(src_dir, dest_dir, ext=None):
+        def file(prefix='', extension=''):
+            temp_file = tempfile.mktemp(prefix=prefix, suffix=f'.{extension}')
+            cmd.touch(temp_file)
+            return temp_file
+
+    def cpf(src_dir, dest_dir, extension=None):
         src_dir = Path(src_dir)
         dest_dir = Path(dest_dir)
-        if ext:
-            if not ext.startswith('.'):
-                ext = '.' + ext
+        if extension:
+            if not extension.startswith('.'):
+                ext = '.' + extension
             pattern = f'*{ext}'
         else:
             pattern = '*'
@@ -122,7 +136,7 @@ class cmd:
                     target = dest / src.name
                     shutil.copytree(src, target)
                 else:
-                    raise NotADirectoryError(f"Destination is not a directory: {dest}")
+                    raise NotADirectoryError(f"Destination is not a dir: {dest}")
             else:
                 shutil.copytree(src, dest)
             return
@@ -155,7 +169,7 @@ class cmd:
 
         if os.path.isdir(source):
             destination_path.mkdir(parents=True, exist_ok=True)
-            sync_files(source_path, destination_path)
+            sync_dirs(source_path, destination_path)
 
             if delete:
                 for dest_dir, _, files in os.walk(destination_path):
@@ -168,5 +182,3 @@ class cmd:
                             src_file = os.path.join(src_dir, file_)
                             if not os.path.exists(src_file):
                                 os.remove(dst_file)
-    def sleep(seconds):
-        return time.sleep(seconds)
