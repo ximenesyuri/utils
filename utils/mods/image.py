@@ -1,10 +1,8 @@
-import requests
-from PIL import Image
-from pixels2svg import pixels2svg
 from utils.err import ImageErr
 
 class image:
     def download(url, path):
+        import requests
         response = requests.get(url)
         if response.status_code == 200:
             with open(path, 'wb') as file:
@@ -14,6 +12,7 @@ class image:
 
     def png_to_webp(source, target):
         try:
+            from PIL import Image
             with Image.open(source) as img:
                 img.save(target, 'webp')
         except Exception as e:
@@ -21,6 +20,7 @@ class image:
 
     def png_to_svg(source, target):
         try:
+            from pixels2svg import pixels2svg
             pixels2svg(source, target, remove_background=True)
         except Exception as e:
             raise ImageErr(e)
