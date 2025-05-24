@@ -1,35 +1,29 @@
 class TextErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class ImageErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class ColorErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class JsonErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class MarkdownErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class DateErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class CmdErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class PathErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
 
 class CompressErr(Exception):
-    def __init__(self, message=""):
-        super().__init__(message)
+    pass
+
+class YamlErr(Exception):
+    pass
