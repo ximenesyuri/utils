@@ -5,6 +5,7 @@ from utils.mods.color    import color
 from utils.mods.text     import text
 from utils.mods.date     import date
 from utils.mods.path     import path
+from utils.mods.file     import file
 from utils.mods.image    import image
 from utils.mods.compress import compress
 from utils.mods.yaml_    import yaml
