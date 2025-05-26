@@ -10,8 +10,13 @@ from typing import (
     Optional,
     Union
 )
+from pydantic import Model
 from pathlib import Path
-from utils.err import JsonErr
 
-Path = Path
-Json = Union[Dict[str, Any], Set[Any], List[Any]]
+JsonData = Union[Dict[str, Any], Set[Any], List[Any]]
+
+class Json:
+    def __init__(self, json_data: JsonData):
+        if not isinstance(json_data, (dict, set, list)):
+            raise TypeError("Data must be a dictionary, set, or list")
+        self._json_data = json_data
