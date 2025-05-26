@@ -10,7 +10,7 @@ from typing import (
     Optional,
     Union
 )
-from pydantic import Model
+from pydantic import BaseModel as Model
 from pathlib import Path
 
 JsonData = Union[Dict[str, Any], Set[Any], List[Any]]
