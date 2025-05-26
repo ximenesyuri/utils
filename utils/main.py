@@ -10,4 +10,5 @@ from utils.mods.file     import file
 from utils.mods.image    import image
 from utils.mods.compress import compress
 from utils.mods.yaml_    import yaml
+from utils.mods.static   import static
 from utils.mods.types    import *
