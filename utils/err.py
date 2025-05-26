@@ -13,6 +13,9 @@ class DateErr(Exception):
 class EnvErr(Exception):
     pass
 
+class FileErr(Exception):
+    pass
+
 class ImageErr(Exception):
     pass
 
