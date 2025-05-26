@@ -25,3 +25,17 @@ class file:
                     return f.write()
         except Exception as e:
             raise FileErr(e)
+
+    def lines(file: Path='') -> list:
+        try:
+            with open(file, 'r') as f:
+                return f.readlines()
+        except Exception as e:
+            raise FileErr(e)
+
+    def stripped_lines(file: Path='') -> list:
+        try:
+            with open(file, 'r') as f:
+                return [line.strip() for line in f.readlines()]
+        except Exception as e:
+            raise FileErr(e)
