@@ -1,7 +1,7 @@
 import os
 import json
 from utils.mods.types import Path, Any, Type
-from utils.path import path
+from utils.mods.path import path
 from utils.err import EnvErr
 
 class Env(str):
