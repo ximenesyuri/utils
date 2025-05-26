@@ -1,28 +1,34 @@
-class TextErr(Exception):
+class CmdErr(Exception):
     pass
 
-class ImageErr(Exception):
+class CompressErr(Exception):
     pass
 
 class ColorErr(Exception):
     pass
 
+class DateErr(Exception):
+    pass
+
+class EnvErr(Exception):
+    pass
+
+class ImageErr(Exception):
+    pass
+
 class JsonErr(Exception):
+    pass
+
+class JTableErr(Exception):
     pass
 
 class MarkdownErr(Exception):
     pass
 
-class DateErr(Exception):
-    pass
-
-class CmdErr(Exception):
-    pass
-
 class PathErr(Exception):
     pass
 
-class CompressErr(Exception):
+class TextErr(Exception):
     pass
 
 class YamlErr(Exception):
