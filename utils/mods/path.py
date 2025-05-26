@@ -5,43 +5,46 @@ from utils.err import PathErr
 class path:
     def exists(*paths: Tuple[Path]) -> bool:
         try:
-            return all(os.path.exists(Path(path_)) for path_ in paths)
+            return all(Path(path_).exists() for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
+    def abs(*paths: Tuple[Path]) -> Tuple[Path]:
+        return (Path(path_).absolute() for path_ in paths)
+
     def is_file(*paths: Tuple[Path]) -> bool:
         try:
-            return all(os.path.isfile(Path(path_)) for path_ in paths)
+            return all(Path(path_).is_file() for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
     def is_dir(*paths: Tuple[Path]) -> bool:
         try:
-            return all(os.path.isdir(Path(path_)) for path_ in paths)
+            return all(Path(path_).is_dir() for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
     def is_abs(*paths: Tuple[Path]) -> bool:
         try:
-            return all(os.path.isabs(Path(path_)) for path_ in paths)
+            return all(Path(path_).is_absolute() for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
     def is_rel(*paths: Tuple[Path]) -> bool:
         try:
-            return not any(os.path.isabs(Path(path_)) for path_ in paths)
+            return not any(Path(path_).is_absolute() for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
     def is_link(*paths: Tuple[Path]) -> bool:
         try:
-            return not any(os.path.islink(Path(path_)) for path_ in paths)
+            return not any(Path(path_).is_symlink() for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
-    def join(*paths: Tuple[Path]) -> Union[Path, Tuple[Path]]:
+    def join(*paths: Tuple[Path]) -> Path:
         try:
-            return os.path.join(*(Path(path_) for path_ in paths))
+            return Path(*paths)
         except Exception as e:
             raise PathErr(e)
 
