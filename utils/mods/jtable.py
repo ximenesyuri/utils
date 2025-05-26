@@ -2,7 +2,7 @@ from utils.mods.types import Json, Any
 from utils.mods.json_ import json
 from utils.err import JTableErr
 
-class JTable(Json):
+class JTable():
     def __init__(self, data):
         if not isinstance(data, list):
             raise TypeError("Input data must be a list.")
