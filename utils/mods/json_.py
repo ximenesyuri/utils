@@ -91,6 +91,7 @@ class json:
             return False
         except Exception as e:
             raise JsonErr(e)
+    has = has_entry
 
     @typed
     def check_entry_type(entry: JsonFlatEntry='', value_type: Type=Nill, json_data: Json={}) -> Bool:
@@ -104,6 +105,7 @@ class json:
             return False
         except Exception as e:
             raise JsonErr(e)
+    check = check_entry_type
 
     @typed
     def get_entry(entry: JsonFlatEntry='', json_data: Json={}) -> Any:
@@ -128,6 +130,7 @@ class json:
             return value if value is not None else ''
         except Exception as e:
             raise JsonErr(e)
+    get = get_entry
 
     @typed
     def entry_has_value(entry: JsonFlatEntry='', value: Any=Nill, json_data: Json={}) -> Bool:
@@ -139,6 +142,7 @@ class json:
                 return False
             raise JsonErr(f"Json data entry is not set: entry='{entry}', json_data='{json_data}'")
         raise JsonErr(f"Json data has not the given entry: entry='{entry}', json_data='{json_data}'")
+    has_value = entry_has_value
 
     @typed
     def get_entries_with_given_value(json_data: Json={}, value: Any=Nill) -> List(Str):
@@ -155,6 +159,7 @@ class json:
                     return json_data
         except Exception as e:
             raise JsonErr(e)
+    set = set_entry_value
 
     @typed
     def replace(json_data: Json, entry: JsonFlatEntry='', old: Any=Nill, new: Any=Nill) -> Json:
