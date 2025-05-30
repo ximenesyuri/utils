@@ -58,7 +58,7 @@ class envs:
     @typed
     def is_defined(env: Env) -> Any:
         try:
-            if os.getenv(Env(env)):
+            if os.getenv(env):
                 return True
             return False
         except Exception as e:
@@ -105,7 +105,7 @@ class envs:
     def set(env: Env='', value: Any=Nill) -> Nill:
         try:
             if env and value:
-                os.environ[Env(env)] = value
+                os.environ[env] = value
         except Exception as e:
             raise EnvErr(e)
 
