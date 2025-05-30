@@ -18,7 +18,7 @@ class json:
             raise JsonErr(f"Could not read json file '{json_file}'.")
 
     @typed
-    def write(json_data: Json={}, output_file: Path='') -> None:
+    def write(json_data: Json={}, output_file: Path='') -> Nill:
         try:
             with open(output_file, 'w') as file:
                 if isinstance(json_data, str):
@@ -29,6 +29,14 @@ class json:
                     file.write(str(json_data))
         except Exception as e:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
+
+    @typed
+    def print(json_data: Json={}) -> Nill:
+        print(json_.dumps(json_data, indent=4))
+
+    @typed
+    def new(*kwargs: Json) -> Json:
+        return kwargs
 
     @typed
     def flat(json_data: Json) -> JsonFlat:
