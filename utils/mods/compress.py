@@ -36,7 +36,7 @@ class compress:
                             arcname = os.path.relpath(dirpath, input_path)
                             tar.add(dirpath, arcname=arcname)
                 elif os.path.isfile(input_path):
-                     tar.add(input_path, arcname=os.path.basename(input_path))
+                    tar.add(input_path, arcname=os.path.basename(input_path))
                 else:
                     raise CompressErr(f"Input path not found or not a file/directory: {input_path}")
 
@@ -54,14 +54,14 @@ class compress:
                             arcname = os.path.relpath(filepath, start=input_path)
                             zipf.write(filepath, arcname=arcname)
                         for dir in dirs:
-                             dirpath = os.path.join(root, dir)
-                             arcname = os.path.relpath(dirpath, start=input_path)
-                             zipf.write(dirpath, arcname + os.sep)
+                            dirpath = os.path.join(root, dir)
+                            arcname = os.path.relpath(dirpath, start=input_path)
+                            zipf.write(dirpath, arcname + os.sep)
 
                 elif os.path.isfile(input_path):
                     zipf.write(input_path, arcname=os.path.basename(input_path))
                 else:
-                     raise CompressErr(f"Input path not found or not a file/directory: {input_path}")
+                    raise CompressErr(f"Input path not found or not a file/directory: {input_path}")
 
         def extract(input_path, output_dir):
             with zipfile.ZipFile(input_path, 'r') as zipf:

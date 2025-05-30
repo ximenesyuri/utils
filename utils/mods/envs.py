@@ -1,24 +1,14 @@
 import os
 import json
-from utils.mods.types import Path, Any, Type
+from typed import typed, Any, Type, Nill, Bool, Str, Union, Path
+from typed.examples import Env
 from utils.mods.path import path
 from utils.err import EnvErr
 
-class Env(str):
-    def __new__(cls, value):
-        if not isinstance(value, str):
-            raise TypeError("Env variable name must be a string.")
-
-        if not all(c.isupper() or c.isdigit() or c == '_' for c in value):
-            raise ValueError(
-                "Env variable name must contain only uppercase letters, numbers, and underscores."
-            )
-        return super().__new__(cls, value)
-
-
 class envs:
-    def __get_dot_env():
-        current_dir = os.path.abspath(".")
+    @typed
+    def __get_dot_env() -> Path:
+        current_dir = path.abs(".")
         while True:
             envpath = path.join(current_dir, ".env")
             if path.exists(envpath):
@@ -28,7 +18,8 @@ class envs:
                 return None
             current_dir = parent_dir
 
-    def load(envpath: Path = __get_dot_env()) -> None:
+    @typed
+    def load(envpath: Path=__get_dot_env()) -> Nill:
         if not path.exists(envpath):
             raise EnvErr(f".env file not found at '{envpath}'.")
 
@@ -64,6 +55,7 @@ class envs:
 
                 os.environ[key] = value
 
+    @typed
     def is_defined(env: Env) -> Any:
         try:
             if os.getenv(Env(env)):
@@ -72,7 +64,8 @@ class envs:
         except Exception as e:
             raise EnvErr(e)
 
-    def get(env: Env) -> Any:
+    @typed
+    def get(env: Env='') -> Any:
         if not envs.is_defined(env):
             raise EnvErr(f"The env '{env}' is not defined.")
         value = os.getenv(env)
@@ -101,7 +94,6 @@ class envs:
                 return int(value)
             except ValueError:
                 pass
-
         if value.count('.') == 1 and value.replace('.', '').isdigit():
             try:
                 return float(value)
@@ -109,20 +101,23 @@ class envs:
                 pass
         return value
 
-    def set(env: Env='', value: Any=None) -> None:
+    @typed
+    def set(env: Env='', value: Any=Nill) -> Nill:
         try:
             if env and value:
                 os.environ[Env(env)] = value
         except Exception as e:
             raise EnvErr(e)
 
+    @typed
     def type(env: Env='') -> Type:
         value = envs.get(env)
         if value is None:
             return None
         return type(value)
 
-    def has_value(env: str='', value: Any=None) -> bool:
+    @typed
+    def has_value(env: Env='', value: Any=Nill) -> Bool:
         env_value = envs.get(env)
         if env_value == value:
             return True

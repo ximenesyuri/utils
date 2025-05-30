@@ -1,74 +1,88 @@
 import os
-from utils.mods.types import Path, Tuple, Union
+from typed import typed, Tuple, Union, Bool, Str, Path
 from utils.err import PathErr
 
 class path:
-    def exists(*paths: Tuple[Path]) -> bool:
+    @typed
+    def exists(*paths: Tuple(Path)) -> Bool:
         try:
-            return all(Path(path_).exists() for path_ in paths)
+            return all(os.path.exists(path_) for path_ in paths)
         except Exception as e:
             raise PathErr(e)
 
-    def abs(*paths: Tuple[Path]) -> Tuple[Path]:
-        return (Path(path_).absolute() for path_ in paths)
-
-    def is_file(*paths: Tuple[Path]) -> bool:
-        try:
-            return all(Path(path_).is_file() for path_ in paths)
-        except Exception as e:
-            raise PathErr(e)
-
-    def is_dir(*paths: Tuple[Path]) -> bool:
-        try:
-            return all(Path(path_).is_dir() for path_ in paths)
-        except Exception as e:
-            raise PathErr(e)
-
-    def is_abs(*paths: Tuple[Path]) -> bool:
-        try:
-            return all(Path(path_).is_absolute() for path_ in paths)
-        except Exception as e:
-            raise PathErr(e)
-
-    def is_rel(*paths: Tuple[Path]) -> bool:
-        try:
-            return not any(Path(path_).is_absolute() for path_ in paths)
-        except Exception as e:
-            raise PathErr(e)
-
-    def is_link(*paths: Tuple[Path]) -> bool:
-        try:
-            return not any(Path(path_).is_symlink() for path_ in paths)
-        except Exception as e:
-            raise PathErr(e)
-
-    def join(*paths: Tuple[Path]) -> Path:
-        try:
-            return Path(*paths)
-        except Exception as e:
-            raise PathErr(e)
-
-    def basename(*paths: Tuple[Path]) -> Union[str, Tuple[str]]:
+    @typed
+    def abs(*paths: Tuple(Path)) -> Union(Path, Tuple(Path)):
         if len(paths) == 1:
-            return os.path.basename(Path(paths[0]))
-        else:
-            return (os.path.basename(Path(path_)) for path_ in paths)
+            return os.path.abspath(paths[0])
+        return (os.path.abspath(path_) for path_ in paths)
 
-    def dirname(*paths: Tuple[Path]) -> Union[str, Tuple[str]]:
-        if len(paths) == 1:
-            return os.path.dirname(Path(paths[0]))
-        else:
-            return (os.path.dirname(Path(path_)) for path_ in paths)
+    @typed
+    def is_file(*paths: Tuple(Path)) -> Bool:
+        try:
+            return all(os.path.isfile(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
 
-    def filename(*paths: Tuple[Path]) -> Union[str, Tuple[str]]:
-        if len(paths) == 1:
-            return path.basename(Path(paths[0])).split('.')[0]
-        else:
-            return (path.basename(Path(path_)).split('.')[0] for path_ in paths)
+    @typed
+    def is_dir(*paths: Tuple(Path)) -> Bool:
+        try:
+            return all(os.path.isdir(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
 
-    def extension(*paths: Tuple[Path]) -> Union[str, Tuple[str]]:
+    @typed
+    def is_abs(*paths: Tuple(Path)) -> Bool:
+        try:
+            return all(os.path.isabs(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
+
+    @typed
+    def is_rel(*paths: Tuple(Path)) -> Bool:
+        try:
+            return not any(os.path.isabs(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
+
+    @typed
+    def is_link(*paths: Tuple(Path)) -> Bool:
+        try:
+            return not any(os.path.islink(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
+
+    @typed
+    def join(*paths: Tuple(Path)) -> Path:
+        try:
+            return os.path.join(*paths)
+        except Exception as e:
+            raise PathErr(e)
+
+    @typed
+    def basename(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
         if len(paths) == 1:
-            return path.basename(Path(paths[0])).split('.')[1]
+            return os.path.basename(paths[0])
         else:
-            return (path.basename(Path(path_)).split('.')[1] for path_ in paths)
+            return (os.path.basename(path_) for path_ in paths)
+
+    @typed
+    def dirname(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
+        if len(paths) == 1:
+            return os.path.dirname(paths[0])
+        else:
+            return (os.path.dirname(path_) for path_ in paths)
+
+    @typed
+    def filename(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
+        if len(paths) == 1:
+            return path.basename(paths[0]).split('.')[0]
+        else:
+            return (path.basename(path_).split('.')[0] for path_ in paths)
+
+    @typed
+    def extension(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
+        if len(paths) == 1:
+            return path.basename(paths[0]).split('.')[1]
+        else:
+            return (path.basename(path_).split('.')[1] for path_ in paths)
     ext = extension

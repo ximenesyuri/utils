@@ -53,8 +53,8 @@ class cmd:
 
     def lsf(dir='', extension=None):
         try:
-            if extension:     
-                return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f)) and f.endswith(ext)]
+            if extension:
+                return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f)) and f.endswith(extension)]
             return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
         except Exception as e:
             print(f"Error: {e}")

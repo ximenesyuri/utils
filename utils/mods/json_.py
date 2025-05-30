@@ -1,128 +1,12 @@
 import re
 import json as json_
-from utils.mods.types import Path, Json, JsonData, Any, Type, List
+from typed import typed, Json, Type, Any, List, Str, Regex, Nill, Bool, Path
+from typed.examples import JsonFlat, JsonFlatEntry
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
 
-class JsonEntry:
-    _VALID_ENTRY_REGEX = re.compile(r'^[a-zA-Z0-9_.]+$')
-    def __init__(self, entry: str):
-        if not isinstance(entry, str):
-            raise TypeError("FlatJsonEntry must be initialized with a string.")
-
-        if not self._VALID_ENTRY_REGEX.match(entry):
-            raise JsonErr(
-                f"Invalid characters in FlatJsonEntry string: '{entry}'. "
-                "Expected format: numbers, letters, underscores, and dots."
-            )
-        self._value = entry
-
-    def __str__(self) -> str:
-        return self._value
-
-    def __repr__(self) -> str:
-        return f"JsonEntry('{self._value}')"
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, JsonEntry):
-            return self._value == other._value
-        elif isinstance(other, str):
-            return self._value == other
-        return False
-
-    def __hash__(self) -> int:
-        return hash(self._value)
-
-    @property
-    def type(self) -> Type:
-        return type(self)
-
-    @property
-    def value(self) -> str:
-        return self._value
-
-class JsonFlat(dict):
-    def __init__(self, json_obj: Json):
-        super().__init__()
-
-        if not isinstance(json_obj, Json):
-            raise TypeError("Input must be an instance of the Json class.")
-
-        data_to_flatten = json_obj.data
-
-        flat_dict = {}
-
-        def flatten(item: Any, parent_key: str = "") -> None:
-            if isinstance(item, dict):
-                for key, value in item.items():
-                    if not isinstance(key, (str, int, float)):
-                        raise JsonErr(f"Invalid key type encountered: {type(key)}. Keys must be strings, integers, or floats.")
-                    str_key = str(key)
-                    new_key = f"{parent_key}.{str_key}" if parent_key else str_key
-                    flatten(value, new_key)
-            elif isinstance(item, list):
-                for index, value in enumerate(item):
-                    new_key = f"{parent_key}.{index}" if parent_key else str(index)
-                    flatten(value, new_key)
-            elif isinstance(item, set):
-                for index, value in enumerate(item):
-                    new_key = f"{parent_key}.{index}" if parent_key else str(index)
-                    flatten(value, new_key)
-            elif isinstance(item, (str, int, float, bool, type(None))):
-                if parent_key:
-                    flat_dict[parent_key] = item
-            else:
-                raise JsonErr(f"Unsupported data type encountered during flattening: {type(item)}")
-        try:
-            flatten(data_to_flatten)
-            self.update(flat_dict)
-        except JsonErr as e:
-            raise JsonErr(f"Error during flattening: {e}") from e
-        except Exception as e:
-            raise JsonErr(f"An unexpected error occurred during flattening: {e}") from e
-
-    def unflat(self) -> JsonData:
-        nested = {}
-        for compound_key, value in self.items():
-            keys = compound_key.split('.')
-            current = nested
-            for i, key in enumerate(keys[:-1]):
-                try:
-                    nested_key: Any = int(key)
-                except ValueError:
-                    nested_key = key
-
-                if nested_key not in current:
-                    if i + 1 < len(keys) - 1 and keys[i+1].isdigit():
-                        current[nested_key] = []
-                    elif nested_key.isdigit():
-                        current[nested_key] = []
-                    else:
-                        current[nested_key] = {}
-
-                if isinstance(current[nested_key], (dict, list)):
-                    current = current[nested_key]
-                else:
-                    raise JsonErr(f"Unflattening failed: Expected dict or list, but found {type(current[nested_key])} at key '{'.'.join(keys[:i+1])}'") 
-            last_key_str = keys[-1]
-            try:
-                last_key: Any = int(last_key_str)
-            except ValueError:
-                last_key = last_key_str
-            if isinstance(current, dict):
-                current[last_key] = value
-            elif isinstance(current, list):
-                index = int(last_key_str)
-                while len(current) <= index:
-                    current.append(None)
-                current[index] = value
-            else:
-                raise JsonErr(f"Unflattening failed: Expected dict or list to add value, but found {type(current)} for key '{compound_key}'")
-        if len(nested) == 1 and list(nested.keys())[0] == '0' and isinstance(list(nested.values())[0], list):
-            return list(nested.values())[0]
-        return nested
-
 class json:
+    @typed
     def read(json_file: Path='') -> Json:
         try:
             if path.is_file(json_file):
@@ -133,7 +17,8 @@ class json:
         except Exception as e:
             raise JsonErr(f"Could not read json file '{json_file}'.")
 
-    def write(json_data: JsonData={}, output_file: Path='') -> None:
+    @typed
+    def write(json_data: Json={}, output_file: Path='') -> None:
         try:
             with open(output_file, 'w') as file:
                 if isinstance(json_data, str):
@@ -145,22 +30,53 @@ class json:
         except Exception as e:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
 
-    def flat(json_data: JsonData={}) -> JsonFlat:
+    @typed
+    def flat(json_data: Json) -> JsonFlat:
+        flat_dict = {}
+        def _flatten(item: Any, parent_key: Str = "") -> Nill:
+            if isinstance(item, dict):
+                for key, value in item.items():
+                    if not isinstance(key, (str, int, float)):
+                        raise JsonErr(f"Invalid key type encountered: {type(key)}. Keys must be strings, integers, or floats.")
+                    str_key = str(key)
+                    new_key = f"{parent_key}.{str_key}" if parent_key else str_key
+                    _flatten(value, new_key)
+            elif isinstance(item, list):
+                for index, value in enumerate(item):
+                    new_key = f"{parent_key}.{index}" if parent_key else str(index)
+                    _flatten(value, new_key)
+            elif isinstance(item, set):
+                for index, value in enumerate(sorted(item, key=str)):
+                    new_key = f"{parent_key}.{index}" if parent_key else str(index)
+                    _flatten(value, new_key)
+            elif isinstance(item, (str, int, float, bool, type(None))):
+                if parent_key:
+                    flat_dict[parent_key] = item
+            else:
+                raise JsonErr(f"Unsupported data type encountered during flattening: {type(item)}")
         try:
-            return JsonFlat(Json(json_data))
+            _flatten(json_data)
+            return flat_dict
         except Exception as e:
-            raise JsonErr(e)
+            raise JsonErr(f"An unexpected error occurred during flattening: {e}") from e 
 
+    @typed
     def unflat(flat_json_data: JsonFlat={}) -> Json:
-        try:
-            return JsonFlat(flat_json_data).unflat()
-        except Exception as e:
-            raise JsonErr(e)
+        nested = {}
+        for compound_key, value in flat_json_data.items():
+            keys = compound_key.split('.')
+            current = nested
+            for key in keys[:-1]:
+                if key not in current or not isinstance(current[key], dict):
+                    current[key] = {}
+                current = current[key]
+            current[keys[-1]] = value
+        return nested
 
-    def has_entry(entry: JsonEntry='', json_data: JsonData={}) -> bool:
+    @typed
+    def has_entry(entry: JsonFlatEntry='', json_data: Json={}) -> Bool:
         try:
-            entry = JsonEntry(entry)
-            flat_json_data = json.flat(Json(json_data))
+            flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
                 if entry == key:
                     return True
@@ -168,10 +84,10 @@ class json:
         except Exception as e:
             raise JsonErr(e)
 
-    def check_entry_type(entry: JsonEntry='', value_type: Type=None, json_data: JsonData={}) -> bool:
+    @typed
+    def check_entry_type(entry: JsonFlatEntry='', value_type: Type=Nill, json_data: Json={}) -> Bool:
         try:
-            entry = JsonEntry(entry)
-            flat_json_data = json.flat(Json(json_data))
+            flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
                 if key == entry:
                     if not type(value) is value_type:
@@ -181,9 +97,9 @@ class json:
         except Exception as e:
             raise JsonErr(e)
 
-    def get_entry(entry: JsonEntry='', json_data: JsonData={}) -> Any:
+    @typed
+    def get_entry(entry: JsonFlatEntry='', json_data: Json={}) -> Any:
         try:
-            entry = JsonEntry(entry)
             keys = entry.split('.')
             value = json_data
             for key in keys:
@@ -205,7 +121,8 @@ class json:
         except Exception as e:
             raise JsonErr(e)
 
-    def entry_has_value(entry: JsonEntry='', value: Any=None, json_data: JsonData={}) -> bool:
+    @typed
+    def entry_has_value(entry: JsonFlatEntry='', value: Any=Nill, json_data: Json={}) -> Bool:
         if json.has_entry(entry=entry, json_data=json_data):
             value_ = json.get_entry(entry=entry, json_data=json_data)
             if value_:
@@ -215,14 +132,15 @@ class json:
             raise JsonErr(f"Json data entry is not set: entry='{entry}', json_data='{json_data}'")
         raise JsonErr(f"Json data has not the given entry: entry='{entry}', json_data='{json_data}'")
 
-    def get_entries_with_given_value(json_data: JsonData={}, value: Any=None) -> List[str]:
+    @typed
+    def get_entries_with_given_value(json_data: Json={}, value: Any=Nill) -> List(Str):
         flat_json_data = json.flat(Json(json_data))
         return [key for key, v in flat_json_data.items() if v == value]
 
-    def set_entry_value(entry: JsonEntry='', json_data: JsonData={}, new_value: Any=None) -> JsonData:
+    @typed
+    def set_entry_value(entry: JsonFlatEntry='', json_data: Json={}, new_value: Any=Nill) -> Json:
         try:
-            entry = JsonEntry(entry)
-            flat_json_data = json.flat(Json(json_data))
+            flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
                 if entry == key:
                     json_data[entry] = new_value
@@ -230,7 +148,8 @@ class json:
         except Exception as e:
             raise JsonErr(e)
 
-    def replace(json_data: JsonData, entry=None, old="", new="") -> JsonData:
+    @typed
+    def replace(json_data: Json, entry: JsonFlatEntry='', old: Any=Nill, new: Any=Nill) -> Json:
         flat_json_data = json.flat(json_data)
         if entry:
             for key, value in flat_json_data.items():
