@@ -1,6 +1,6 @@
 import os
 import json
-from typed import typed, Any, Type, Nill, Bool, Str, Union, Path
+from typed import *
 from typed.examples import Env
 from utils.mods.path import path
 from utils.err import EnvErr
@@ -8,7 +8,7 @@ from utils.err import EnvErr
 class envs:
     @typed
     def dotenv() -> Union(Path, Nill):
-        current_dir = os.path.abspath(".")
+        current_dir = path.abs(path.dirname(__file__))
         while True:
             envpath = path.join(current_dir, ".env")
             if path.exists(envpath):
@@ -25,7 +25,7 @@ class envs:
             if not envpath:
                 envpath = '.env'
         if not path.exists(envpath):
-            raise EnvErr(f".env file not found at '{envpath}'.")
+            raise EnvErr(f".env file not found.")
 
         with open(envpath, 'r') as f:
             for line in f:
@@ -58,6 +58,32 @@ class envs:
                 value = value.replace('\\\\', '\\')
 
                 os.environ[key] = value
+
+    @typed
+    def get_all(envpath: Union(Path, Nill)=None) -> Dict(Any):
+        if not envpath:
+            envpath = envs.dotenv()
+            if not envpath:
+                envpath = '.env'
+        if not path.exists(envpath):
+            raise EnvErr(f".env file not found at '{envpath}'.")
+        with open(envpath, 'r') as f:
+            envs_ = {}
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                equals_index = line.find('=')
+                if equals_index == -1:
+                    continue
+                key = line[:equals_index].strip()
+                value = line[equals_index + 1:].strip()
+                envs_.update({key: value})
+            return envs_
+
+    @typed
+    def print(envpath: Union(Path, Nill)=None) -> Nill:
+        print(envs.get_all(envpath))
 
     @typed
     def is_defined(env: Env='') -> Any:
