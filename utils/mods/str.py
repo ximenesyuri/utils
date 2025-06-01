@@ -3,8 +3,11 @@ import unicodedata
 
 class str:
     @typed
-    def join(iterator: Union(List(Str), Tuple(Str), Set(Str))=[], separator: Str='') -> Str:
-        return separator.join(iterator)    
+    def join(iterators: List(Union(List(Str), Tuple(Str), Set(Str)))=[], separator: Str='') -> Str:
+        its = []
+        for iterator in iterators:
+            its.append(separator.join(iterator))
+        return separator.join(its)
 
     @typed
     def slugify(string: Str="") -> Str:
