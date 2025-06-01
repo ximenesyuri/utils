@@ -7,8 +7,8 @@ from utils.err import EnvErr
 
 class envs:
     @typed
-    def __get_dot_env() -> Path:
-        current_dir = path.abs(".")
+    def dotenv() -> Union(Path, Nill):
+        current_dir = os.path.abspath(".")
         while True:
             envpath = path.join(current_dir, ".env")
             if path.exists(envpath):
@@ -19,7 +19,11 @@ class envs:
             current_dir = parent_dir
 
     @typed
-    def load(envpath: Path=__get_dot_env()) -> Nill:
+    def load(envpath: Union(Path, Nill)=None) -> Nill:
+        if not envpath:
+            envpath = envs.dotenv()
+            if not envpath:
+                envpath = '.env'
         if not path.exists(envpath):
             raise EnvErr(f".env file not found at '{envpath}'.")
 
@@ -56,13 +60,14 @@ class envs:
                 os.environ[key] = value
 
     @typed
-    def is_defined(env: Env) -> Any:
+    def is_defined(env: Env='') -> Any:
         try:
             if os.getenv(env):
                 return True
             return False
         except Exception as e:
             raise EnvErr(e)
+    exists = is_defined
 
     @typed
     def get(env: Env='') -> Any:
