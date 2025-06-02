@@ -3,7 +3,7 @@ import unicodedata
 
 class str:
     @typed
-    def join(iterator: List(Str)=[], separator: Str='') -> Str:
+    def join(iterator: List(Any)=[], separator: Str='') -> Str:
         return separator.join(iterator)
 
     @typed
