@@ -10,7 +10,7 @@ class str:
         return separator.join(its)
 
     @typed
-    def split(string: Str, separator: Str='') -> List[Str]:
+    def split(string: Str, separator: Str='') -> List(Str):
         return string.split(separators)
 
     @typed
