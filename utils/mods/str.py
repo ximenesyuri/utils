@@ -3,11 +3,8 @@ import unicodedata
 
 class str:
     @typed
-    def join(iterators: List(Any)=[], separator: Str='') -> Str:
-        its = []
-        for iterator in iterators:
-            its.append(separator.join(iterator))
-        return separator.join(its)
+    def join(iterator: List(Str)=[], separator: Str='') -> Str:
+        return separator.join(iterator)
 
     @typed
     def split(string: Str, separator: Str='') -> List(Str):
