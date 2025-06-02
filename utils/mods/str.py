@@ -10,6 +10,10 @@ class str:
         return separator.join(its)
 
     @typed
+    def split(string: Str, separator: Str='') -> List[Str]:
+        return string.split(separators)
+
+    @typed
     def concat(*strings: Tuple(Str)) -> Str:
         return ''.join(strings)
 
