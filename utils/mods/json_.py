@@ -1,7 +1,7 @@
 import re
 import json as json_
 from typed import typed, Json, Type, Any, List, Str, Regex, Nill, Bool, Path
-from typed.examples import JsonFlat, JsonFlatEntry
+from typed.examples import JsonFlat, JsonEntry
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
 
@@ -82,7 +82,7 @@ class json:
         return nested
 
     @typed
-    def has_entry(entry: JsonFlatEntry='', json_data: Json={}) -> Bool:
+    def has_entry(entry: JsonEntry='', json_data: Json={}) -> Bool:
         try:
             flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
@@ -94,7 +94,7 @@ class json:
     has = has_entry
 
     @typed
-    def check_entry_type(entry: JsonFlatEntry='', value_type: Type=Nill, json_data: Json={}) -> Bool:
+    def check_entry_type(entry: JsonEntry='', value_type: Type=Nill, json_data: Json={}) -> Bool:
         try:
             flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
@@ -108,7 +108,7 @@ class json:
     check = check_entry_type
 
     @typed
-    def get_entry(entry: JsonFlatEntry='', json_data: Json={}) -> Any:
+    def get_entry(entry: JsonEntry='', json_data: Json={}) -> Any:
         try:
             keys = entry.split('.')
             value = json_data
@@ -133,7 +133,7 @@ class json:
     get = get_entry
 
     @typed
-    def entry_has_value(entry: JsonFlatEntry='', value: Any=Nill, json_data: Json={}) -> Bool:
+    def entry_has_value(entry: JsonEntry='', value: Any=Nill, json_data: Json={}) -> Bool:
         if json.has_entry(entry=entry, json_data=json_data):
             value_ = json.get_entry(entry=entry, json_data=json_data)
             if value_:
@@ -150,7 +150,7 @@ class json:
         return [key for key, v in flat_json_data.items() if v == value]
 
     @typed
-    def set_entry_value(entry: JsonFlatEntry='', json_data: Json={}, new_value: Any=Nill) -> Json:
+    def set_entry_value(entry: JsonEntry='', json_data: Json={}, new_value: Any=Nill) -> Json:
         try:
             flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
@@ -162,7 +162,7 @@ class json:
     set = set_entry_value
 
     @typed
-    def replace(json_data: Json, entry: JsonFlatEntry='', old: Any=Nill, new: Any=Nill) -> Json:
+    def replace(json_data: Json, entry: JsonEntry='', old: Any=Nill, new: Any=Nill) -> Json:
         flat_json_data = json.flat(json_data)
         if entry:
             for key, value in flat_json_data.items():
