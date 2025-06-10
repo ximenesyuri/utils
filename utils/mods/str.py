@@ -12,6 +12,10 @@ class str:
         return string.split(separator, stop_in)
 
     @typed
+    def strip(string: Str) -> Str:
+        return string.strip()
+
+    @typed
     def concat(*strings: Tuple(Str)) -> Str:
         return ''.join(strings)
 
