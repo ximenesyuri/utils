@@ -1,5 +1,6 @@
-from typed import *
 import unicodedata
+import re
+from typed import *
 
 class str:
     @typed
@@ -19,6 +20,7 @@ class str:
         if len(strings) == 1:
             return strings[0].capitalize()
         return (string.capitalize() for string in strings)
+    cap = capitalize
 
     @typed
     def lower(*strings: Tuple(Str)) -> Union(Str, Tuple(Str)):
@@ -37,6 +39,14 @@ class str:
         for k,v in replacements.items():
             string = string.replace(k, v)
         return string
+
+    @typed
+    def subs(string: Str='', pattern: Pattern=r'', replacement: Str='' ) -> Str:
+        return re.sub(pattern, replacement, string)
+
+    @typed
+    def escape(string: Str) -> Str:
+        return re.escape(string)
 
     @typed
     def slugify(*strings: Tuple(Str)) -> Union(Tuple(Str), Str, Nill):
