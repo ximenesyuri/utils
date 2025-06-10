@@ -8,8 +8,8 @@ class str:
         return separator.join(iterator)
 
     @typed
-    def split(string: Str, separator: Str='') -> List(Str):
-        return string.split(separator)
+    def split(string: Str, separator: Str='', stop_in: Int=-1) -> List(Str):
+        return string.split(separator, stop_in)
 
     @typed
     def concat(*strings: Tuple(Str)) -> Str:
