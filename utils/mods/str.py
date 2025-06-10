@@ -16,6 +16,14 @@ class str:
         return ''.join(strings)
 
     @typed
+    def begins(*strings: Tuple(Str), substring: Str) -> Bool:
+        return all(string.startswith(substring) for string in strings)
+
+    @typed
+    def ends(*strings: Tuple(Str), substring: Str) -> Bool:
+        return all(string.endswith(substring) for string in strings)
+
+    @typed
     def capitalize(*strings: Tuple(Str)) -> Union(Str, Tuple(Str)):
         if len(strings) == 1:
             return strings[0].capitalize()
