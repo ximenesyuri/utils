@@ -145,24 +145,47 @@ class json:
     has_value = entry_has_value
 
     @typed
-    def get_entries_with_given_value(json_data: Json={}, value: Any=Nill) -> List(Str):
+    def get_entries_with_given_value(value: Any=Nill, json_data: Json={}) -> List(Str):
         flat_json_data = json.flat(Json(json_data))
         return [key for key, v in flat_json_data.items() if v == value]
 
     @typed
-    def set_entry_value(entry: JsonEntry='', json_data: Json={}, new_value: Any=Nill) -> Json:
+    def set_entry_value(entry: JsonEntry='', new_value: Any=Nill, json_data: Json={}) -> Json:
         try:
             flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():
                 if entry == key:
                     json_data[entry] = new_value
                     return json_data
+            raise JsonErr(f"Json has no entry '{entry}'.")
         except Exception as e:
             raise JsonErr(e)
     set = set_entry_value
 
     @typed
-    def replace(json_data: Json, entry: JsonEntry='', old: Any=Nill, new: Any=Nill) -> Json:
+    def append(entry: JsonEntry='', value: Any=Nill, json_data: Json={}) -> Json:
+        try:
+            flat_json_data = json.flat(json_data)
+            for key, value in flat_json_data.items():
+                if entry == key:
+                    raise JsonErr(f"Json already has entry '{entry}'.")
+            keys = entry.split('.')
+            update_dict = {}
+            current_update_dict = update_dict
+            for i, key in enumerate(keys):
+                if i == len(keys) - 1:
+                    current_update_dict[key] = value
+                else:
+                    if key not in current_update_dict:
+                        current_update_dict[key] = {}
+                    current_update_dict = current_update_dict[key]
+            json_data.update(update_dict)
+            return json_data
+        except Exception as e:
+            raise JsonErr(e)
+
+    @typed
+    def replace(entry: JsonEntry='', old: Any=Nill, new: Any=Nill, json_data: Json={}) -> Json:
         flat_json_data = json.flat(json_data)
         if entry:
             for key, value in flat_json_data.items():
