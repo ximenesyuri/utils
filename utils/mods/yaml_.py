@@ -1,3 +1,4 @@
+from typed import *
 import yaml as yaml_
 from utils.mods.path import path
 from utils.err import PathErr, YamlErr
@@ -13,10 +14,17 @@ class yaml:
         except Exception as e:
             raise YamlErr(f"Could not read YAML file '{yaml_file}'. Error: {e}")
 
-    def write(yaml_data, output_file):
+    def write(json_data, output_file):
         try:
             with open(output_file, 'w') as file:
-                yaml.dump(yaml_data, file, default_flow_style=False, sort_keys=False)
+                yaml.dump(json_data, file, default_flow_style=False, sort_keys=False)
         except Exception as e:
             raise YamlErr(f"Could not write YAML data to file '{output_file}'. Error: {e}")
+
+    def dump(json_data: Json) -> Str:
+        try:
+            yaml_.dump(json_data, default_flow_style=False, sort_keys=False)
+        except Exception as e:
+            raise YamlErr(f"Could dum YAML data. Error: {e}")
+
 

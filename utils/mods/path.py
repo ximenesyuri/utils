@@ -1,8 +1,16 @@
 import os
-from typed import typed, Tuple, Union, Bool, Str, Path
+from typed import Bool, Path, Union, Tuple, Int, Str, typed
 from utils.err import PathErr
 
 class path:
+    @typed
+    def cwd() -> Path:
+        try:
+            return os.getcwd()
+        except Exception as e:
+            raise PathErr(e)
+    pwd = cwd
+
     @typed
     def exists(*paths: Tuple(Path)) -> Bool:
         try:
@@ -12,9 +20,12 @@ class path:
 
     @typed
     def abs(*paths: Tuple(Path)) -> Union(Path, Tuple(Path)):
-        if len(paths) == 1:
-            return os.path.abspath(paths[0])
-        return (os.path.abspath(path_) for path_ in paths)
+        try:
+            if len(paths) == 1:
+                return os.path.abspath(paths[0])
+            return (os.path.abspath(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
 
     @typed
     def is_file(*paths: Tuple(Path)) -> Bool:
@@ -60,29 +71,53 @@ class path:
 
     @typed
     def basename(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
-        if len(paths) == 1:
-            return os.path.basename(paths[0])
-        else:
-            return (os.path.basename(path_) for path_ in paths)
+        try:
+            if len(paths) == 1:
+                return os.path.basename(paths[0])
+            else:
+                return (os.path.basename(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
 
     @typed
     def dirname(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
-        if len(paths) == 1:
-            return os.path.dirname(paths[0])
-        else:
-            return (os.path.dirname(path_) for path_ in paths)
+        try:
+            if len(paths) == 1:
+                return os.path.dirname(paths[0])
+            else:
+                return (os.path.dirname(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
 
     @typed
     def filename(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
-        if len(paths) == 1:
-            return path.basename(paths[0]).split('.')[0]
-        else:
-            return (path.basename(path_).split('.')[0] for path_ in paths)
+        try:
+            if len(paths) == 1:
+                return path.basename(paths[0]).split('.')[0]
+            else:
+                return (path.basename(path_).split('.')[0] for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
 
     @typed
     def extension(*paths: Tuple(Path)) -> Union(Str, Tuple(Str)):
-        if len(paths) == 1:
-            return path.basename(paths[0]).split('.')[1]
-        else:
-            return (path.basename(path_).split('.')[1] for path_ in paths)
+        try:
+            if len(paths) == 1:
+                return path.basename(paths[0]).split('.')[1]
+            else:
+                return (path.basename(path_).split('.')[1] for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
     ext = extension
+
+    @typed
+    def parent(path: Path="", level: Int=1) -> Path:
+        parts = path.split('/')
+        if len(parts) < level:
+            level = len(parts)
+        last_part = -level
+        if not parts[0:last_part] or parts[0:last_part] == ['']:
+            return '/'
+        return '/'.join(parts[0:last_part])
+
+

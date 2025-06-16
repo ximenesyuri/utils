@@ -16,7 +16,7 @@ class EnvErr(Exception):
 class FileErr(Exception):
     pass
 
-class ImageErr(Exception):
+class ImgErr(Exception):
     pass
 
 class JsonErr(Exception):
@@ -31,8 +31,11 @@ class MarkdownErr(Exception):
 class PathErr(Exception):
     pass
 
-class TextErr(Exception):
+class StrErr(Exception):
     pass
 
 class YamlErr(Exception):
+    pass
+
+class ListErr(Exception):
     pass

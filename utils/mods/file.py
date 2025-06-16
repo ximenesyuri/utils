@@ -30,7 +30,7 @@ class file:
             raise FileErr(e)
 
     @typed
-    def lines(file: Path='') -> List(Str):
+    def get_lines(file: Path='') -> List(Str):
         try:
             with open(file, 'r') as f:
                 return f.readlines()
@@ -38,7 +38,7 @@ class file:
             raise FileErr(e)
 
     @typed
-    def stripped_lines(file: Path='') -> List(Str):
+    def get_stripped_lines(file: Path='') -> List(Str):
         try:
             with open(file, 'r') as f:
                 return [line.strip() for line in f.readlines()]

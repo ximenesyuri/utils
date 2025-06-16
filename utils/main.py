@@ -6,8 +6,10 @@ from utils.mods.date     import date
 from utils.mods.envs     import envs
 from utils.mods.path     import path
 from utils.mods.file     import file
-from utils.mods.image    import image
+from utils.mods.img      import img
 from utils.mods.compress import compress
 from utils.mods.yaml_    import yaml
 from utils.mods.static   import static
 from utils.mods.str      import str
+from utils.mods.list     import list
+from utils.mods.lib      import install
