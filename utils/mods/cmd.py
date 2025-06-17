@@ -153,10 +153,10 @@ class cmd:
                 raise CmdErr(e)
 
     @typed
-    def cpf(src_dir: Dir, dest_dir: Path, extension: Str='') -> Nill:
+    def cpf(source: Dir, target: Path, extension: Str='') -> Nill:
         try:
-            src_dir = Path_(src_dir)
-            dest_dir = Path_(dest_dir)
+            source = Path_(source)
+            target = Path_(target)
             if extension:
                 if not extension.startswith('.'):
                     ext = '.' + extension
@@ -164,21 +164,21 @@ class cmd:
             else:
                 pattern = '*'
 
-            for src_path in src_dir.rglob(pattern):
+            for src_path in source.rglob(pattern):
                 if not src_path.is_file():
                     continue
-                rel_path = src_path.relative_to(src_dir)
-                target_path = dest_dir / rel_path
+                rel_path = src_path.relative_to(source)
+                target_path = target / rel_path
                 target_path.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(src_path, target_path)
         except Exception as e:
             raise CmdErr(e)
 
     @typed
-    def cp(src: Exists='', dest: Path='') -> Nill:
+    def cp(source, Exists='', target: Path='') -> Nill:
         try:
-            src = Path_(src)
-            dest = Path_(dest)
+            src = Path_(source)
+            dest = Path_(target)
             if src.is_file():
                 if dest.exists() and dest.is_dir():
                     target = dest / src.name
@@ -214,12 +214,12 @@ class cmd:
             shutil.copy2(source, destination)
 
         def sync_dirs(src, dest):
-            for src_dir, _, files in os.walk(src):
-                dst_dir = src_dir.replace(str(src), str(dest), 1)
-                Path_(dst_dir).mkdir(parents=True, exist_ok=True)
+            for source, _, files in os.walk(src):
+                target = source.replace(str(src), str(dest), 1)
+                Path_(target).mkdir(parents=True, exist_ok=True)
                 for file_ in files:
-                    src_file = os.path.join(src_dir, file_)
-                    dst_file = os.path.join(dst_dir, file_)
+                    src_file = os.path.join(source, file_)
+                    dst_file = os.path.join(target, file_)
                     if not os.path.exists(dst_file) or not filecmp.cmp(src_file, dst_file, shallow=False):
                         shutil.copy2(src_file, dst_file)
 
@@ -228,13 +228,13 @@ class cmd:
             sync_dirs(source_path, destination_path)
 
             if delete:
-                for dest_dir, _, files in os.walk(destination_path):
-                    src_dir = dest_dir.replace(str(destination_path), str(source_path), 1)
-                    if not os.path.exists(src_dir):
-                        shutil.rmtree(dest_dir)
+                for target, _, files in os.walk(destination_path):
+                    source = target.replace(str(destination_path), str(source_path), 1)
+                    if not os.path.exists(source):
+                        shutil.rmtree(target)
                     else:
                         for file_ in files:
-                            dst_file = os.path.join(dest_dir, file_)
-                            src_file = os.path.join(src_dir, file_)
+                            dst_file = os.path.join(target, file_)
+                            src_file = os.path.join(source, file_)
                             if not os.path.exists(src_file):
                                 os.remove(dst_file)
