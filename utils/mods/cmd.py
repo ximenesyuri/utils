@@ -116,7 +116,7 @@ class cmd:
             raise CmdErr(e)
 
     @typed
-    def mkdir(path: Path) -> Nill:
+    def mkdir(path: Path="") -> Nill:
         try:
             path_to_create = Path_(path)
             path_to_create.mkdir(parents=True, exist_ok=True)
@@ -125,7 +125,7 @@ class cmd:
     mkd = mkdir
 
     @typed
-    def touch(path: Path) -> Nill:
+    def touch(path: Path="") -> Nill:
         try:
             path_to_create = Path_(path)
             path_to_create.touch(exist_ok=True)
@@ -153,7 +153,7 @@ class cmd:
                 raise CmdErr(e)
 
     @typed
-    def cpf(source: Dir, target: Path, extension: Str='') -> Nill:
+    def cpf(source: Dir="", target: Path="", extension: Str='') -> Nill:
         try:
             source = Path_(source)
             target = Path_(target)
@@ -175,7 +175,7 @@ class cmd:
             raise CmdErr(e)
 
     @typed
-    def cp(source, Exists='', target: Path='') -> Nill:
+    def cp(source: Exists='', target: Path='') -> Nill:
         try:
             src = Path_(source)
             dest = Path_(target)
