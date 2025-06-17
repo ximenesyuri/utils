@@ -5,150 +5,206 @@ import os
 import sys
 import time
 import subprocess
-from pathlib import Path
+from pathlib import Path as Path_
+from typed import typed, Str, List, Bool, Path, Nill, Any
+from typed.examples import Dir, Env, PosInt, Nat, Exists
+from utils.err import CmdErr
 
 class cmd:
-    def run(cmd_string, cwd=None, envs=None, terminate=True, **kargs):
-        cmd_list = cmd_string.split()
-        env = os.environ.copy()
-        if envs:
-            env.update(envs)
-        if terminate:
-            try:
-                process = subprocess.run(
-                    cmd_list,
-                    cwd=cwd,
-                    capture_output=True,
-                    text=True,
-                    env=env,
-                    check=True
-                )
-                return process.stderr, process.stdout
-            except subprocess.CalledProcessError as e:
-                return e.stderr, e.stdout
-        else:
-            try:
-                process = subprocess.Popen(
-                    cmd_list,
-                    cwd=cwd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    text=True,
-                    bufsize=1,
-                    env=env
-                )
-                for line in process.stdout:
-                    print(line, end='')
-                return_code = process.wait()
-                return None, None
-            except Exception as e:
-                print(f"Error in Popen: {e}", file=sys.stderr)
-                return str(e), None
-
-    def sleep(seconds=1):
-        return time.sleep(seconds)
-
-    def exit(code=0):
-        return sys.exit(code)
-
-    def lsf(dir='', extension=None):
+    @typed
+    def run(cmd_str: Str='', cwd: Path='', envs: List(Env)=[], terminate: Bool=True, **kargs: Any) -> Nill:
         try:
-            if extension:
-                return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f)) and f.endswith(extension)]
-            return [f for f in os.listdir(dir) if os.path.isfile(os.path.join(dir, f))]
+            cmd_list = cmd_str.split()
+            env = os.environ.copy()
+            if envs:
+                env.update(envs)
+            if terminate:
+                try:
+                    process = subprocess.run(
+                        cmd_list,
+                        cwd=cwd,
+                        capture_output=True,
+                        text=True,
+                        env=env,
+                        check=True
+                    )
+                    return process.stderr, process.stdout
+                except subprocess.CalledProcessError as e:
+                    return e.stderr, e.stdout
+            else:
+                try:
+                    process = subprocess.Popen(
+                        cmd_list,
+                        cwd=cwd,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,
+                        text=True,
+                        bufsize=1,
+                        env=env
+                    )
+                    for line in process.stdout:
+                        print(line, end='')
+                    return_code = process.wait()
+                    return None, None
+                except Exception as e:
+                    print(f"Error in Popen: {e}", file=sys.stderr)
+                    return str(e), None
         except Exception as e:
-            print(f"Error: {e}")
-            return []
+            raise CmdErr(e)
 
-    def lsd(dir, exclude=None):
+    @typed
+    def sleep(seconds: PosInt=1) -> Nill:
         try:
-            if exclude is None:
-                exclude = []
+            return time.sleep(seconds)
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
+    def exit(code: Nat=0) -> Nill:
+        try:
+            return sys.exit(code)
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
+    def ls(dir: Dir='', exclude: List(Str)=[]) -> List(Path):
+        try:
             return [
                 d for d in os.listdir(dir)
-                if os.path.isdir(os.path.join(dir, d)) and d not in exclude
+                and d not in exclude
             ]
         except Exception as e:
-            print(f"Error: {e}")
-            return []
+            raise CmdErr(e)
 
-    def rm(path):
-        path_to_remove = Path(path)
-        if path_to_remove.exists():
-            if path_to_remove.is_dir():
-                shutil.rmtree(path_to_remove)
-            else:
-                os.remove(path_to_remove)
+    @typed
+    def lsf(dir: Dir='', extension: Str='') -> List(Path):
+        try:
+            if extension:
+                return [
+                    f for f in os.listdir(dir)
+                    if os.path.isfile(os.path.join(dir, f))
+                    and f.endswith(extension)
+                ]
+            return [
+                f for f in os.listdir(dir)
+                if os.path.isfile(os.path.join(dir, f))
+            ]
+        except Exception as e:
+            raise CmdErr(e)
 
-    def mkdir(path):
-        path_to_create = Path(path)
-        path_to_create.mkdir(parents=True, exist_ok=True)
+    @typed
+    def lsd(dir: Dir='', exclude: List(Str)=[]) -> List(Path):
+        try:
+            return [
+                d for d in os.listdir(dir)
+                if os.path.isdir(os.path.join(dir, d))
+                and d not in exclude
+            ]
+        except Exception as e:
+            raise CmdErr(e)
 
-    def touch(path):
-        path_to_create = Path(path)
-        path_to_create.touch(exist_ok=True)
+    @typed
+    def rm(path: Path='') -> Nill:
+        try:
+            path_to_remove = Path_(path)
+            if path_to_remove.exists():
+                if path_to_remove.is_dir():
+                    shutil.rmtree(path_to_remove)
+                else:
+                    os.remove(path_to_remove)
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
+    def mkdir(path: Path) -> Nill:
+        try:
+            path_to_create = Path_(path)
+            path_to_create.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            raise CmdErr(e)
+    mkd = mkdir
+
+    @typed
+    def touch(path: Path) -> Nill:
+        try:
+            path_to_create = Path_(path)
+            path_to_create.touch(exist_ok=True)
+        except Exception as e:
+            raise CmdErr(e)
+    mkf = touch
 
     class mktemp:
-        def dir():
-            temp_dir = tempfile.mkdtemp()
-            cmd.mkdir(temp_dir)
-            return temp_dir
+        @typed
+        def dir() -> Path:
+            try:
+                temp_dir = tempfile.mkdtemp()
+                cmd.mkdir(temp_dir)
+                return temp_dir
+            except Exception as e:
+                raise CmdErr(e)
 
-        def file(prefix='', extension=''):
-            temp_file = tempfile.mktemp(prefix=prefix, suffix=f'.{extension}')
-            cmd.touch(temp_file)
-            return temp_file
+        @typed
+        def file(prefix: Str='', extension: Str='') -> Path:
+            try:
+                temp_file = tempfile.mktemp(prefix=prefix, suffix=f'.{extension}')
+                cmd.touch(temp_file)
+                return temp_file
+            except Exception as e:
+                raise CmdErr(e)
 
-    def cpf(src_dir, dest_dir, extension=None):
-        src_dir = Path(src_dir)
-        dest_dir = Path(dest_dir)
-        if extension:
-            if not extension.startswith('.'):
-                ext = '.' + extension
-            pattern = f'*{ext}'
-        else:
-            pattern = '*'
-
-        for src_path in src_dir.rglob(pattern):
-            if not src_path.is_file():
-                continue
-            rel_path = src_path.relative_to(src_dir)
-            target_path = dest_dir / rel_path
-            target_path.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src_path, target_path)
-
-    def cp(src, dest):
-        src = Path(src)
-        dest = Path(dest)
-        if not src.exists():
-            raise FileNotFoundError(f"Source not found: {src}")
-        if src.is_file():
-            if dest.exists() and dest.is_dir():
-                target = dest / src.name
+    @typed
+    def cpf(src_dir: Dir, dest_dir: Path, extension: Str='') -> Nill:
+        try:
+            src_dir = Path_(src_dir)
+            dest_dir = Path_(dest_dir)
+            if extension:
+                if not extension.startswith('.'):
+                    ext = '.' + extension
+                pattern = f'*{ext}'
             else:
-                target = dest
-                target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src, target)
-            return
-        if src.is_dir():
-            if dest.exists():
-                if dest.is_dir():
+                pattern = '*'
+
+            for src_path in src_dir.rglob(pattern):
+                if not src_path.is_file():
+                    continue
+                rel_path = src_path.relative_to(src_dir)
+                target_path = dest_dir / rel_path
+                target_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src_path, target_path)
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
+    def cp(src: Exists='', dest: Path='') -> Nill:
+        try:
+            src = Path_(src)
+            dest = Path_(dest)
+            if src.is_file():
+                if dest.exists() and dest.is_dir():
                     target = dest / src.name
-                    shutil.copytree(src, target)
                 else:
-                    raise NotADirectoryError(f"Destination is not a dir: {dest}")
-            else:
-                shutil.copytree(src, dest)
-            return
-        raise ValueError(f"Unsupported source type: {src}")
+                    target = dest
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, target)
+                return
+            if src.is_dir():
+                if dest.exists():
+                    if dest.is_dir():
+                        target = dest / src.name
+                        shutil.copytree(src, target)
+                    else:
+                        raise NotADirectoryError(f"Destination is not a dir: {dest}")
+                else:
+                    shutil.copytree(src, dest)
+                return
+            raise ValueError(f"Unsupported source type: {src}")
+        except Exception as e:
+            raise CmdErr(e)
 
-    def rsync(source, destination, delete=False):
-        source_path = Path(source)
-        destination_path = Path(destination)
-
-        if not source_path.exists():
-            raise FileExistsError(f"The source path {source_path} does not exist.")
-            return
+    @typed
+    def rsync(source: Exists='', target: Path='', delete: Bool=False) -> Nill:
+        source_path = Path_(source)
+        destination_path = Path_(destination)
 
         if source_path.is_file():
             if delete:
@@ -160,7 +216,7 @@ class cmd:
         def sync_dirs(src, dest):
             for src_dir, _, files in os.walk(src):
                 dst_dir = src_dir.replace(str(src), str(dest), 1)
-                Path(dst_dir).mkdir(parents=True, exist_ok=True)
+                Path_(dst_dir).mkdir(parents=True, exist_ok=True)
                 for file_ in files:
                     src_file = os.path.join(src_dir, file_)
                     dst_file = os.path.join(dst_dir, file_)
