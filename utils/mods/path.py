@@ -119,5 +119,3 @@ class path:
         if not parts[0:last_part] or parts[0:last_part] == ['']:
             return '/'
         return '/'.join(parts[0:last_part])
-
-

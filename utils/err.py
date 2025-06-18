@@ -39,3 +39,6 @@ class YamlErr(Exception):
 
 class ListErr(Exception):
     pass
+
+class StaticErr(Exception):
+    pass

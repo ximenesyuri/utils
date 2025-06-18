@@ -7,7 +7,7 @@ from utils.err import EnvErr
 
 class envs:
     @typed
-    def dotenv() -> Union(Path, Nill):
+    def dotenv() -> Maybe(Path):
         current_dir = path.abs(path.dirname(__file__))
         while True:
             envpath = path.join(current_dir, ".env")
@@ -19,7 +19,7 @@ class envs:
             current_dir = parent_dir
 
     @typed
-    def load(envpath: Union(Path, Nill)=None) -> Nill:
+    def load(envpath: Maybe(Path)=None) -> Nill:
         if not envpath:
             envpath = envs.dotenv()
             if not envpath:
@@ -60,7 +60,7 @@ class envs:
                 os.environ[key] = value
 
     @typed
-    def get_all(envpath: Union(Path, Nill)=None) -> Dict(Any):
+    def get_all(envpath: Maybe(Path)=None) -> Dict(Any):
         if not envpath:
             envpath = envs.dotenv()
             if not envpath:
@@ -82,7 +82,7 @@ class envs:
             return envs_
 
     @typed
-    def print(envpath: Union(Path, Nill)=None) -> Nill:
+    def print(envpath: Maybe(Path)=None) -> Nill:
         print(envs.get_all(envpath))
 
     @typed

@@ -43,7 +43,7 @@ class img:
                 parent   = path.parent(source)
                 filename = path.filename(path.basename(source))
                 target   = path.join(parent, f'{filename}.svg')
-            install(pixels2svg)
+            install('pixels2svg')
             from pixels2svg import pixels2svg
             pixels2svg(source, target, remove_background=True)
         except Exception as e:

@@ -12,7 +12,10 @@ from utils.err import CmdErr
 
 class cmd:
     @typed
-    def run(cmd_str: Str='', cwd: Path='', envs: List(Env)=[], terminate: Bool=True, **kargs: Any) -> Nill:
+    def run(cmd_str: Str, cwd: Path='', envs: List(Env)=[], terminate: Bool=True, **kargs: Any) -> Nill:
+        """
+        Execute any system command as a subprocess by passing a command str and environment variables.
+        """
         try:
             cmd_list = cmd_str.split()
             env = os.environ.copy()
