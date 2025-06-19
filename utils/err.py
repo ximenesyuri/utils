@@ -42,3 +42,6 @@ class ListErr(Exception):
 
 class StaticErr(Exception):
     pass
+
+class ToErr(Exception):
+    pass

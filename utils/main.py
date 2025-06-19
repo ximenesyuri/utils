@@ -12,4 +12,5 @@ from utils.mods.yaml_    import yaml
 from utils.mods.static   import static
 from utils.mods.str      import str
 from utils.mods.list     import list
-from utils.mods.lib      import install
+from utils.mods.lib      import lib
+from utils.mods.to       import to
