@@ -1,14 +1,14 @@
 import os
 from typed import typed, Path, Nill, Maybe
 from typed.examples import HttpUrl, File
-from utils.mods.lib import install
+from utils.mods.lib import lib
 from utils.err import ImgErr
 
 class img:
     @typed
     def download(url: HttpUrl='https://', path: Maybe(Path)=Nill) -> Nill:
         try:
-            install('requests')
+            lib.install('requests')
             import requests
             response = requests.get(url)
             if response.status_code == 200:
@@ -29,7 +29,7 @@ class img:
                 parent   = path.parent(source)
                 filename = path.filename(path.basename(source))
                 target   = path.join(parent, f'{filename}.webp')
-            install('Pillow')
+            lib.install('Pillow')
             from PIL import Image
             with Image.open(source) as img:
                 img.save(target, 'webp')
@@ -43,7 +43,7 @@ class img:
                 parent   = path.parent(source)
                 filename = path.filename(path.basename(source))
                 target   = path.join(parent, f'{filename}.svg')
-            install('pixels2svg')
+            lib.install('pixels2svg')
             from pixels2svg import pixels2svg
             pixels2svg(source, target, remove_background=True)
         except Exception as e:
