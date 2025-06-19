@@ -1,4 +1,4 @@
-from typed import Any, Str, List, Tuple, Set
+from typed import typed, Any, Str, Int, List, Tuple, Set
 from utils.err import ToErr
 
 class to:
