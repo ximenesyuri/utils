@@ -22,6 +22,10 @@ With [py](https://github.com/ximenesyuri/py):
 py i pythonalta/utils  
 ```
 
+# Dependences
+
+The only global dependency is [typed](https://github.com/pythonalta/typed)
+
 # Structure
 
 ```
