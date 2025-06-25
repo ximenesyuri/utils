@@ -1,7 +1,7 @@
 [project]
 name = "utils"
-version = "0.0.0"
-description = "Some random utils"
+version = "0.1.0"
+description = "General typed utilities"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "BSD"}
