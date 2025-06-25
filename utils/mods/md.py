@@ -45,5 +45,5 @@ class md:
     def to_html(markdown: Markdown) -> Str:
         from utils.mods.lib import lib
         lib.install('markdown')
-        import markdown as markdown_
+        from markdown import markdown as markdown_
         return markdown_(markdown)
