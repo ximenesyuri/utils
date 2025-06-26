@@ -57,11 +57,9 @@ class json:
                 for index, value in enumerate(sorted(item, key=str)):
                     new_key = f"{parent_key}.{index}" if parent_key else str(index)
                     _flatten(value, new_key)
-            elif isinstance(item, (str, int, float, bool, type(None))):
+            else:
                 if parent_key:
                     flat_dict[parent_key] = item
-            else:
-                raise JsonErr(f"Unsupported data type encountered during flattening: {type(item)}")
         try:
             _flatten(json_data)
             return flat_dict
