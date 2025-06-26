@@ -1,6 +1,6 @@
 import re
 import json as json_
-from typed import typed, Json, Type, Any, List, Str, Regex, Nill, Bool, Path
+from typed import typed, Json, Type, Any, List, Str, Regex, Nill, Bool, Path, Union
 from typed.examples import JsonFlat, JsonEntry
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
@@ -108,26 +108,30 @@ class json:
     check = check_entry_type
 
     @typed
-    def get_entry(entry: JsonEntry='', json_data: Json={}) -> Any:
+    def get_entry(entry: JsonEntry = '', std: Any={}, json_data: Json = {}) -> Any:
+        """
+        Collect an 'entry' from a 'json_data' and return
+        a 'std' value if the 'entry' was not found.
+        """
         try:
             keys = entry.split('.')
             value = json_data
             for key in keys:
                 if isinstance(value, dict):
                     if key not in value:
-                        return ''
+                        return std
                     value = value[key]
                 elif isinstance(value, list):
                     try:
                         index = int(key)
                     except ValueError:
-                        return ''
+                        return std
                     if index < 0 or index >= len(value):
-                        return ''
+                        return std
                     value = value[index]
                 else:
-                    return ''
-            return value if value is not None else ''
+                    return std
+            return value if value is not None else std
         except Exception as e:
             raise JsonErr(e)
     get = get_entry
@@ -185,6 +189,22 @@ class json:
             raise JsonErr(e)
 
     @typed
+    def remove_entries(json_data: Json={}, entries: Union(JsonEntry, List(JsonEntry))="") -> Json:
+        """
+        Remove given 'entries' of a 'json_data' if they exist
+        """
+        flat_json = json.flat(json_data)
+        if isinstance(entries, JsonEntry):
+            if entries in flat_json:
+                del flat_json[entries]
+        else:
+            for entry in entries:
+                if entry in flat_json:
+                    del flat_json[entry]
+        return json.unflat(flat_json)
+    rm = remove_entries
+
+    @typed
     def replace(entry: JsonEntry='', old: Any=Nill, new: Any=Nill, json_data: Json={}) -> Json:
         flat_json_data = json.flat(json_data)
         if entry:
@@ -199,3 +219,4 @@ class json:
             if type(value) is str:
                 flat_json_data[key] = flat_json_data[key].replace(old, new)
         return json.unflat(flat_json_data)
+    tr = replace
