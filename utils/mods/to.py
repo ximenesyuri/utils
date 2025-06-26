@@ -31,7 +31,7 @@ class to:
             raise ToErr(e)
 
     @typed
-    def set(x: Any) -> Set:
+    def set(x: Any) -> Set(Any):
         try:
            return set(x)
         except Exception as e:
