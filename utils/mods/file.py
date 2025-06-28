@@ -16,7 +16,7 @@ class file:
     def write(filepath: Path='', content: Str='') -> Nill:
         try:
             with open(filepath, 'w') as f:
-                return f.write()
+                return f.write(content)
         except Exception as e:
             raise FileErr(e)
 
@@ -24,7 +24,7 @@ class file:
     def append(filepath: File='', content: Str='') -> Nill:
         try:
             with open(filepath, 'a') as f:
-                return f.write()
+                return f.write(content)
         except Exception as e:
             raise FileErr(e)
 
