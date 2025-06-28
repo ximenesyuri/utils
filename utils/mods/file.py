@@ -1,46 +1,45 @@
 from typed import typed, Path, Str, Nill, List
+from typed.examples import File
 from utils.mods.path  import path
 from utils.err import FileErr
 
 class file:
     @typed
-    def read(file: Path='') -> Str:
+    def read(filepath: File='') -> Str:
         try:
-            if path.is_file(file):
-                with open(file, 'r') as f:
-                    return f.read()
+            with open(filepath, 'r') as f:
+                return f.read()
         except Exception as e:
             raise FileErr(e)
 
     @typed
-    def write(file: Path='', content: Str='') -> Nill:
+    def write(filepath: Path='', content: Str='') -> Nill:
         try:
-            with open(file, 'w') as f:
+            with open(filepath, 'w') as f:
                 return f.write()
         except Exception as e:
             raise FileErr(e)
 
     @typed
-    def append(file: Path='', content: Str='') -> Nill:
+    def append(filepath: File='', content: Str='') -> Nill:
         try:
-            if path.is_file(file):
-                with open(file, 'a') as f:
-                    return f.write()
+            with open(filepath, 'a') as f:
+                return f.write()
         except Exception as e:
             raise FileErr(e)
 
     @typed
-    def get_lines(file: Path='') -> List(Str):
+    def get_lines(filepath: File='') -> List(Str):
         try:
-            with open(file, 'r') as f:
+            with open(filepath, 'r') as f:
                 return f.readlines()
         except Exception as e:
             raise FileErr(e)
 
     @typed
-    def get_stripped_lines(file: Path='') -> List(Str):
+    def get_stripped_lines(filepath: File='') -> List(Str):
         try:
-            with open(file, 'r') as f:
+            with open(filepath, 'r') as f:
                 return [line.strip() for line in f.readlines()]
         except Exception as e:
             raise FileErr(e)
