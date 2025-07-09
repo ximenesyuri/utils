@@ -1,7 +1,6 @@
 import os
 import json
-from typed import *
-from typed.examples import Env
+from typed import typed, Maybe, Path, Nill, Env, Dict, Any, Bool, TYPE
 from utils.mods.path import path
 from utils.err import EnvErr
 
@@ -141,7 +140,7 @@ class envs:
             raise EnvErr(e)
 
     @typed
-    def type(env: Env='') -> Type:
+    def type(env: Env='') -> TYPE:
         value = envs.get(env)
         if value is None:
             return None

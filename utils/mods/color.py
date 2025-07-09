@@ -1,5 +1,4 @@
-from typed import typed
-from typed.examples import HEX, RGB, HSL
+from typed import typed, HEX, RGB, HSL
 
 class color:
     @typed

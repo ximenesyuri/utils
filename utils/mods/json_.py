@@ -1,7 +1,20 @@
 import re
 import json as json_
-from typed import typed, Json, Type, Any, List, Str, Regex, Nill, Bool, Path, Union
-from typed.examples import JsonFlat, JsonEntry
+from typed import (
+    typed,
+    Json,
+    TYPE,
+    Any,
+    List,
+    Str,
+    Regex,
+    Nill,
+    Bool,
+    Path,
+    Union,
+    JsonFlat,
+    JsonEntry
+)
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
 
@@ -92,7 +105,7 @@ class json:
     has = has_entry
 
     @typed
-    def check_entry_type(entry: JsonEntry='', value_type: Type=Nill, json_data: Json={}) -> Bool:
+    def check_entry_type(entry: JsonEntry='', value_type: TYPE=Nill, json_data: Json={}) -> Bool:
         try:
             flat_json_data = json.flat(json_data)
             for key, value in flat_json_data.items():

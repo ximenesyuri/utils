@@ -1,5 +1,5 @@
 from typed import typed, Str, Json
-from typed.examples import Markdown
+from typed.more import Markdown
 
 class md:
     @typed

@@ -1,6 +1,18 @@
 import unicodedata
 import re
-from typed import *
+from typed import (
+    typed,
+    List,
+    Any,
+    Str,
+    Tuple,
+    Union,
+    Dict,
+    Pattern,
+    Int,
+    Bool,
+    Nill
+)
 
 class str:
     @typed

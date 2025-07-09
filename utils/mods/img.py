@@ -1,6 +1,5 @@
 import os
-from typed import typed, Path, Nill, Maybe
-from typed.examples import HttpUrl, File
+from typed import typed, Path, Nill, Maybe, HttpUrl, File
 from utils.mods.lib import lib
 from utils.err import ImgErr
 

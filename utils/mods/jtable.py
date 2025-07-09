@@ -1,8 +1,6 @@
-from typed import typed, Json, Any, Str, List
-from typed.examples import JsonTable
+from typed import typed, Json, Any, Str, List, JsonTable
 from utils.mods.json_ import json
 from utils.err import JTableErr
-
 
 class jtable:
     @typed

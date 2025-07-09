@@ -6,8 +6,20 @@ import sys
 import time
 import subprocess
 from pathlib import Path as Path_
-from typed import typed, Str, List, Bool, Path, Nill, Any
-from typed.examples import Dir, Env, PosInt, Nat, Exists
+from typed import (
+    typed,
+    Str,
+    List,
+    Bool,
+    Path,
+    Nill,
+    Any,
+    Dir,
+    Env,
+    PosInt,
+    Nat,
+    Exists
+)
 from utils.err import CmdErr
 
 class cmd:

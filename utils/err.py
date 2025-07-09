@@ -25,7 +25,7 @@ class JsonErr(Exception):
 class JTableErr(Exception):
     pass
 
-class MarkdownErr(Exception):
+class MDErr(Exception):
     pass
 
 class PathErr(Exception):
@@ -44,4 +44,7 @@ class StaticErr(Exception):
     pass
 
 class ToErr(Exception):
+    pass
+
+class TypErr(Exception):
     pass
