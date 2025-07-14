@@ -12,8 +12,8 @@ from typed import (
     Bool,
     Path,
     Union,
-    JsonFlat,
-    JsonEntry
+    Flat,
+    Entry
 )
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
@@ -52,7 +52,7 @@ class json:
         return kwargs
 
     @typed
-    def flat(json_data: Json) -> JsonFlat:
+    def flat(json_data: Json) -> Flat:
         flat_dict = {}
         def _flatten(item: Any, parent_key: Str = "") -> Nill:
             if isinstance(item, dict):
@@ -80,9 +80,9 @@ class json:
             raise JsonErr(f"An unexpected error occurred during flattening: {e}") from e 
 
     @typed
-    def unflat(flat_json_data: JsonFlat={}) -> Json:
+    def unflat(flat_data: Flat={}) -> Json:
         nested = {}
-        for compound_key, value in flat_json_data.items():
+        for compound_key, value in flat_data.items():
             keys = compound_key.split('.')
             current = nested
             for key in keys[:-1]:
@@ -93,10 +93,10 @@ class json:
         return nested
 
     @typed
-    def has_entry(entry: JsonEntry='', json_data: Json={}) -> Bool:
+    def has_entry(entry: Entry='', json_data: Json={}) -> Bool:
         try:
-            flat_json_data = json.flat(json_data)
-            for key, value in flat_json_data.items():
+            flat_data = json.flat(json_data)
+            for key, value in flat_data.items():
                 if entry == key:
                     return True
             return False
@@ -105,10 +105,10 @@ class json:
     has = has_entry
 
     @typed
-    def check_entry_type(entry: JsonEntry='', value_type: TYPE=Nill, json_data: Json={}) -> Bool:
+    def check_entry_type(entry: Entry='', value_type: TYPE=Nill, json_data: Json={}) -> Bool:
         try:
-            flat_json_data = json.flat(json_data)
-            for key, value in flat_json_data.items():
+            flat_data = json.flat(json_data)
+            for key, value in flat_data.items():
                 if key == entry:
                     if not type(value) is value_type:
                         return False
@@ -119,7 +119,7 @@ class json:
     check = check_entry_type
 
     @typed
-    def get_entry(entry: JsonEntry = '', std: Any={}, json_data: Json = {}) -> Any:
+    def get_entry(entry: Entry = '', std: Any={}, json_data: Json = {}) -> Any:
         """
         Collect an 'entry' from a 'json_data' and return
         a 'std' value if the 'entry' was not found.
@@ -148,7 +148,7 @@ class json:
     get = get_entry
 
     @typed
-    def entry_has_value(entry: JsonEntry='', value: Any=Nill, json_data: Json={}) -> Bool:
+    def entry_has_value(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Bool:
         if json.has_entry(entry=entry, json_data=json_data):
             value_ = json.get_entry(entry=entry, json_data=json_data)
             if value_:
@@ -161,14 +161,14 @@ class json:
 
     @typed
     def get_entries_with_given_value(value: Any=Nill, json_data: Json={}) -> List(Str):
-        flat_json_data = json.flat(Json(json_data))
-        return [key for key, v in flat_json_data.items() if v == value]
+        flat_data = json.flat(Json(json_data))
+        return [key for key, v in flat_data.items() if v == value]
 
     @typed
-    def set_entry_value(entry: JsonEntry='', new_value: Any=Nill, json_data: Json={}) -> Json:
+    def set_entry_value(entry: Entry='', new_value: Any=Nill, json_data: Json={}) -> Json:
         try:
-            flat_json_data = json.flat(json_data)
-            for key, value in flat_json_data.items():
+            flat_data = json.flat(json_data)
+            for key, value in flat_data.items():
                 if entry == key:
                     json_data[entry] = new_value
                     return json_data
@@ -178,10 +178,10 @@ class json:
     set = set_entry_value
 
     @typed
-    def append(entry: JsonEntry='', value: Any=Nill, json_data: Json={}) -> Json:
+    def append(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Json:
         try:
-            flat_json_data = json.flat(json_data)
-            for key, value in flat_json_data.items():
+            flat_data = json.flat(json_data)
+            for key, value in flat_data.items():
                 if entry == key:
                     raise JsonErr(f"Json already has entry '{entry}'.")
             keys = entry.split('.')
@@ -200,12 +200,12 @@ class json:
             raise JsonErr(e)
 
     @typed
-    def remove_entries(json_data: Json={}, entries: Union(JsonEntry, List(JsonEntry))="") -> Json:
+    def remove_entries(json_data: Json={}, entries: Union(Entry, List(Entry))="") -> Json:
         """
         Remove given 'entries' of a 'json_data' if they exist
         """
         flat_json = json.flat(json_data)
-        if isinstance(entries, JsonEntry):
+        if isinstance(entries, Entry):
             if entries in flat_json:
                 del flat_json[entries]
         else:
@@ -216,18 +216,18 @@ class json:
     rm = remove_entries
 
     @typed
-    def replace(entry: JsonEntry='', old: Any=Nill, new: Any=Nill, json_data: Json={}) -> Json:
-        flat_json_data = json.flat(json_data)
+    def replace(entry: Entry='', old: Any=Nill, new: Any=Nill, json_data: Json={}) -> Json:
+        flat_data = json.flat(json_data)
         if entry:
-            for key, value in flat_json_data.items():
+            for key, value in flat_data.items():
                 if key == entry:
                     if type(value) is str:
-                        flat_json_data[entry] = flat_json_data[entry].replace(old, new)
-                        return json.unflat(flat_json_data)
+                        flat_data[entry] = flat_data[entry].replace(old, new)
+                        return json.unflat(flat_data)
                     raise TypeError(f"Entry value is not a string: {entry}")
 
-        for key, value in flat_json_data.items():
+        for key, value in flat_data.items():
             if type(value) is str:
-                flat_json_data[key] = flat_json_data[key].replace(old, new)
-        return json.unflat(flat_json_data)
+                flat_data[key] = flat_data[key].replace(old, new)
+        return json.unflat(flat_data)
     tr = replace

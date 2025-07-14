@@ -22,7 +22,7 @@ class ImgErr(Exception):
 class JsonErr(Exception):
     pass
 
-class JTableErr(Exception):
+class TableErr(Exception):
     pass
 
 class MDErr(Exception):

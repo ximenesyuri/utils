@@ -16,7 +16,7 @@ from typed import (
     Any,
     Dir,
     Env,
-    PosInt,
+    Pos,
     Nat,
     Exists
 )
@@ -68,7 +68,7 @@ class cmd:
             raise CmdErr(e)
 
     @typed
-    def sleep(seconds: PosInt=1) -> Nill:
+    def sleep(seconds: Pos=1) -> Nill:
         try:
             return time.sleep(seconds)
         except Exception as e:

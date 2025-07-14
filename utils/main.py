@@ -1,6 +1,6 @@
 from utils.mods.cmd      import cmd
 from utils.mods.json_    import json
-from utils.mods.jtable   import jtable
+from utils.mods.table    import table
 from utils.mods.color    import color
 from utils.mods.date     import date
 from utils.mods.envs     import envs
