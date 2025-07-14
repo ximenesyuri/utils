@@ -1,11 +1,11 @@
 import os
-from typed import typed, Path, Nill, Maybe, HttpUrl, File
+from typed import typed, Path, Nill, Maybe, Url, File
 from utils.mods.lib import lib
 from utils.err import ImgErr
 
 class img:
     @typed
-    def download(url: HttpUrl='https://', path: Maybe(Path)=Nill) -> Nill:
+    def download(url: Url("http", "https")='https://', path: Maybe(Path)=Nill) -> Nill:
         try:
             lib.install('requests')
             import requests

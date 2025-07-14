@@ -7,3 +7,4 @@ wheels/
 .venv
 *.py[oc]
 .env
+*.py[oc]
