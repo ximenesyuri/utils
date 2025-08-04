@@ -1,22 +1,59 @@
+from functools import wraps
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, Function, List, Tuple, Str, Dict, Any
-from utils.mods.helper import _get_globals
+from typed import typed, Function, List, Tuple, Str, Dict, Any, Callable
+from utils.mods.helper import _get_globals, _copy_func, _collect_decorators
+from utils.err import FuncErr
 
 class func:
     @typed
     def signature(f: Function) -> Signature:
-        return signature(f)
+        try:
+            return signature(f)
+        except Exception as e:
+            raise FuncErr(e)
     sig = signature
 
     @typed
     def params(f: Function) -> Tuple(Parameter):
-        return (param for param in signature(f).parameters.values())
+        try:
+            return (param for param in signature(f).parameters.values())
+        except Exception as e:
+            raise FuncErr(e)
     args = params
 
     @typed
     def code(f: Function) -> Str:
-        return getsource(f)
+        try:
+            return getsource(f)
+        except Exception as e:
+            raise FuncErr(e)
 
     @typed
     def globals(f: Function) -> Dict(Any):
-        return  _get_globals(f)
+        try:
+            return  _get_globals(f)
+        except Exception as e:
+            raise FuncErr(e)
+
+    @typed
+    def wrap(f: Function) -> Function:
+        try:
+            return wraps(f)
+        except Exception as e:
+            raise FuncErr(e)
+
+    @typed
+    def unwrap(f: Function) -> Function:
+        try:
+            while hasattr(f, '__wrapped__'):
+                f = f.__wrapped__
+            return f
+        except Exception as e:
+            raise FuncErr(e)
+
+    @typed
+    def copy(f: Function, **renamed_vars: Dict(Str)) -> Function:
+        try:
+            return _copy_func(f, **renamed_vars)
+        except Exception as e:
+            raise FuncErr(e)

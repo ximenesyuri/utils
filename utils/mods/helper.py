@@ -1,13 +1,17 @@
+import ast
 import inspect
-from typed import typed, Function, Set, Any, Dict, Bool
+import textwrap
+from functools import wraps, WRAPPER_ASSIGNMENTS, update_wrapper
+from inspect import signature, Signature, Parameter, _empty, getsource, cleandoc
+from typed import typed, Function, Set, Any, Str, Dict, Bool
 
 @typed
 def _extract_recursive_globals(func: Function) -> Set(Any):
-    src = inspect.getsource(func)
-    src = inspect.cleandoc(src)
+    src = getsource(func)
+    src = textwrap.dedent(src)
     tree = ast.parse(src)
     referenced = set()
-    sig = inspect.signature(func)
+    sig = signature(func)
     for param in sig.parameters.values():
         ann = param.annotation
         if isinstance(ann, str):
@@ -58,3 +62,143 @@ def _get_globals(func: Function, extra_search_modules: Bool=True) -> Dict(Any):
         if not found:
             pass
     return base
+
+def _copy_func(func: Function, **rename_map: Dict(Str)) -> Function:
+    if not callable(func):
+        raise TypeError("copy_function expects a function as input")
+
+    seen = set()
+    while hasattr(func, '__wrapped__') and func not in seen:
+        seen.add(func)
+        func = func.__wrapped__
+
+    if not rename_map:
+        def make_empty_deepcopy(f):
+            newf = type(f)(
+                f.__code__, f.__globals__, f.__name__,
+                f.__defaults__, f.__closure__
+            )
+            newf.__dict__.update(f.__dict__)
+            update_wrapper(newf, f)
+            return newf
+        return make_empty_deepcopy(func)
+
+    src = getsource(func)
+    src = textwrap.dedent(src)
+    tree = ast.parse(src)
+
+    class ParamRenamer(ast.NodeTransformer):
+        def __init__(self, rename_map):
+            self.rename_map = rename_map
+        def visit_FunctionDef(self, node):
+            for arg in node.args.args:
+                if arg.arg in self.rename_map:
+                    arg.arg = self.rename_map[arg.arg]
+            for arg in node.args.kwonlyargs:
+                if arg.arg in self.rename_map:
+                    arg.arg = self.rename_map[arg.arg]
+            if node.args.vararg and node.args.vararg.arg in self.rename_map:
+                node.args.vararg.arg = self.rename_map[node.args.vararg.arg]
+            if node.args.kwarg and node.args.kwarg.arg in self.rename_map:
+                node.args.kwarg.arg = self.rename_map[node.args.kwarg.arg]
+            self.generic_visit(node)
+            return node
+        def visit_Name(self, node):
+            if node.id in self.rename_map:
+                node.id = self.rename_map[node.id]
+            return node
+        def visit_Attribute(self, node):
+            self.generic_visit(node)
+            if isinstance(node.value, ast.Name) and node.value.id in self.rename_map:
+                node.value.id = self.rename_map[node.value.id]
+            return node
+        def visit_Call(self, node):
+            if isinstance(node.func, ast.Name) and node.func.id in self.rename_map:
+                node.func.id = self.rename_map[node.func.id]
+            self.generic_visit(node)
+            return node
+
+    class StringDotRenamer(ast.NodeTransformer):
+        def __init__(self, rename_map):
+            self.rename_map = rename_map
+        def visit_Constant(self, node):
+            if isinstance(node.value, str):
+                for k, v in self.rename_map.items():
+                    node.value = node.value.replace(f"{k}.", f"{v}.")
+            return node
+        def visit_Str(self, node):
+            for k, v in self.rename_map.items():
+                node.s = node.s.replace(f"{k}.", f"{v}.")
+            return node
+
+    tree = ParamRenamer(rename_map).visit(tree)
+    tree = StringDotRenamer(rename_map).visit(tree)
+    ast.fix_missing_locations(tree)
+
+    code = compile(tree, filename="<_copy_func>", mode="exec")
+    globs = _get_globals(func)
+    locs = {}
+    exec(code, globs, locs)
+    func_name = func.__name__
+    new_func = locs[func_name]
+    update_wrapper(new_func, func)
+
+    old_sig = signature(func)
+    new_params = []
+    new_annotations = {}
+    for param in old_sig.parameters.values():
+        if param.name in rename_map:
+            new_name = rename_map[param.name]
+            new_param = Parameter(
+                new_name, kind=param.kind, default=param.default,
+                annotation=param.annotation
+            )
+            new_params.append(new_param)
+            if param.annotation is not _empty:
+                new_annotations[new_name] = param.annotation
+        else:
+            new_params.append(param)
+            if param.annotation is not _empty:
+                new_annotations[param.name] = param.annotation
+    new_func.__signature__ = Signature(parameters=new_params, return_annotation=old_sig.return_annotation)
+    new_annotations['return'] = old_sig.return_annotation
+    new_func.__annotations__ = new_annotations
+
+    return new_func
+
+def _collect_decorators(f):
+    """Return (innermost, [list_of_wrappers_from_outermost_to_innermost])"""
+    wrappers = []
+    orig = f
+    seen_ids = set()
+    while hasattr(orig, '__wrapped__') and id(orig) not in seen_ids:
+        seen_ids.add(id(orig))
+        outer = orig
+        def closure(inner):
+            def _wrap(*a, **kw):
+                return outer(*a, **kw)
+            update_wrapper(_wrap, outer)
+            return _wrap
+        wrappers.append(outer)
+        orig = orig.__wrapped__
+    return orig, wrappers[::-1]
+
+def _re_wrap(core_func, wrappers):
+    """Given a function and a list of wrapper functions, reapply them in order."""
+    f = core_func
+    for wrapper in wrappers:
+        if hasattr(wrapper, "__original_decorator__"):
+            f = wrapper.__original_decorator__(f)
+        elif getattr(wrapper, "_is_bound_decorator", False):
+            f = wrapper._decorator_func(f)
+        elif hasattr(wrapper, "__closure__") and wrapper.__closure__:
+            newf = type(wrapper)(wrapper.__code__, f.__globals__, wrapper.__name__,
+                                 wrapper.__defaults__, wrapper.__closure__)
+            update_wrapper(newf, wrapper)
+            newf.__wrapped__ = f
+            f = newf
+        else:
+            # If wrapper is a standard wraps...then update_wrapper should be enough
+            update_wrapper(f, wrapper)
+            f.__wrapped__ = f  # Make __wrapped__ correct
+    return f
