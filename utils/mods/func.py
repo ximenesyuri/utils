@@ -1,5 +1,6 @@
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, Function, List
+from typed import typed, Function, List, Tuple, Str, Dict, Any
+from utils.mods.helper import _get_globals
 
 class func:
     @typed
@@ -16,4 +17,6 @@ class func:
     def code(f: Function) -> Str:
         return getsource(f)
 
-
+    @typed
+    def globals(f: Function) -> Dict(Any):
+        return  _get_globals(f)

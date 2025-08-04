@@ -1,9 +1,8 @@
 from typed import typed, Str, Json
-from typed.more import Markdown
 
 class md:
     @typed
-    def get_frontmatter(markdown: Markdown) -> Json:
+    def get_frontmatter(markdown: Str) -> Json:
         if markdown.startswith('---'):
             parts = markdown.split('---', 2)
             if len(parts) >= 3:
@@ -27,7 +26,7 @@ class md:
         return {}
 
     @typed
-    def remove_frontmatter(markdown: Markdown) -> Str:
+    def remove_frontmatter(markdown: Str) -> Str:
         if markdown.startswith('---'):
             parts = markdown.split('---', 2)
             if len(parts) == 3:
@@ -42,7 +41,7 @@ class md:
         return markdown
 
     @typed
-    def to_html(markdown: Markdown) -> Str:
+    def to_html(markdown: Str) -> Str:
         from utils.mods.lib import lib
         lib.install('markdown')
         from markdown import markdown as markdown_
