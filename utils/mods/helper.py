@@ -201,6 +201,6 @@ def _eval_func(func: Function, **fixed_kwargs: Dict(Any)) -> Function:
 
     wrapper.__signature__ = new_sig
     if hasattr(func, '__annotations__'):
-        wrapped.__annotations__ = dict(func.__annotations__)
+        wrapper.__annotations__ = dict(func.__annotations__)
 
     return wrapper
