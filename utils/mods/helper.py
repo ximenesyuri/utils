@@ -63,6 +63,7 @@ def _get_globals(func: Function, extra_search_modules: Bool=True) -> Dict(Any):
             pass
     return base
 
+@typed
 def _copy_func(func: Function, **rename_map: Dict(Str)) -> Function:
     if not callable(func):
         raise TypeError("copy_function expects a function as input")
@@ -166,39 +167,40 @@ def _copy_func(func: Function, **rename_map: Dict(Str)) -> Function:
 
     return new_func
 
-def _collect_decorators(f):
-    """Return (innermost, [list_of_wrappers_from_outermost_to_innermost])"""
-    wrappers = []
-    orig = f
-    seen_ids = set()
-    while hasattr(orig, '__wrapped__') and id(orig) not in seen_ids:
-        seen_ids.add(id(orig))
-        outer = orig
-        def closure(inner):
-            def _wrap(*a, **kw):
-                return outer(*a, **kw)
-            update_wrapper(_wrap, outer)
-            return _wrap
-        wrappers.append(outer)
-        orig = orig.__wrapped__
-    return orig, wrappers[::-1]
+@typed
+def _eval_func(func: Function, **fixed_kwargs: Dict(Any)) -> Function:
+    sig = signature(func)
+    old_params = list(sig.parameters.items())
 
-def _re_wrap(core_func, wrappers):
-    """Given a function and a list of wrapper functions, reapply them in order."""
-    f = core_func
-    for wrapper in wrappers:
-        if hasattr(wrapper, "__original_decorator__"):
-            f = wrapper.__original_decorator__(f)
-        elif getattr(wrapper, "_is_bound_decorator", False):
-            f = wrapper._decorator_func(f)
-        elif hasattr(wrapper, "__closure__") and wrapper.__closure__:
-            newf = type(wrapper)(wrapper.__code__, f.__globals__, wrapper.__name__,
-                                 wrapper.__defaults__, wrapper.__closure__)
-            update_wrapper(newf, wrapper)
-            newf.__wrapped__ = f
-            f = newf
+    missing = [k for k in fixed_kwargs if k not in sig.parameters]
+    if missing:
+        raise TypeError(
+            f"{func.__name__} has no argument(s): {', '.join(missing)}"
+        )
+
+    new_params = []
+    for name, param in old_params:
+        if name in fixed_kwargs:
+            new_param = Parameter(
+                name,
+                kind=param.kind,
+                default=fixed_kwargs[name],
+                annotation=param.annotation
+            )
+            new_params.append(new_param)
         else:
-            # If wrapper is a standard wraps...then update_wrapper should be enough
-            update_wrapper(f, wrapper)
-            f.__wrapped__ = f  # Make __wrapped__ correct
-    return f
+            new_params.append(param)
+
+    new_sig = Signature(new_params)
+
+    def wrapper(*args, **kwargs):
+        ba = new_sig.bind_partial(*args, **kwargs)
+        ba.apply_defaults()
+        result = func(**ba.arguments)
+        return result
+
+    wrapper.__signature__ = new_sig
+    if hasattr(func, '__annotations__'):
+        wrapped.__annotations__ = dict(func.__annotations__)
+
+    return wrapper
