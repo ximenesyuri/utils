@@ -1,5 +1,6 @@
 import os
-from typed import Bool, Path, Union, Tuple, Int, Str, typed
+import sys
+from typed import Bool, Path, Union, Tuple, Int, Str, typed, Nill
 from utils.err import PathErr
 
 class path:
@@ -24,6 +25,14 @@ class path:
             if len(paths) == 1:
                 return os.path.abspath(paths[0])
             return (os.path.abspath(path_) for path_ in paths)
+        except Exception as e:
+            raise PathErr(e)
+
+    @typed
+    def insert(*paths: Tuple(Path)) -> Nill:
+        try:
+            for p in paths:
+                sys.path.insert(0, path.abs(p))
         except Exception as e:
             raise PathErr(e)
 
