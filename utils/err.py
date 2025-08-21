@@ -10,7 +10,7 @@ class TableErr(Exception): pass
 class MDErr(Exception): pass
 class PathErr(Exception): pass
 class StrErr(Exception): pass
-class YamlErr(Exception): pass
+class YMLErr(Exception): pass
 class ListErr(Exception): pass
 class StaticErr(Exception): pass
 class ToErr(Exception): pass
