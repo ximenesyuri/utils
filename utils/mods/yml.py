@@ -9,7 +9,7 @@ class yml:
         try:
             if path.is_file(yml_file):
                 with open(yml_file, 'r') as file:
-                    return yml.safe_load(file)
+                    return yaml.safe_load(file)
             else:
                 raise PathErr(f"path '{yml_file}' does not exist or is not a file.")
         except Exception as e:
