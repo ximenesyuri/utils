@@ -1,3 +1,4 @@
+import os
 from typed import *
 from utils.mods.path import path
 from utils.mods.lib  import lib
@@ -7,12 +8,10 @@ class yml:
     def read(yml_file):
         import yaml
         try:
-            if path.is_file(yml_file):
+            if os.path.isfile(yml_file):
                 with open(yml_file, 'r') as file:
-                    if yaml.safe_load(file) is not None:
-                        return yaml.safe_load(file)
-                    else:
-                        return {}
+                    json_data = yaml.safe_load(file)
+                    return json_data if json_data else {}
             else:
                 raise PathErr(f"path '{yml_file}' does not exist or is not a file.")
         except Exception as e:
