@@ -13,7 +13,12 @@ from typed import (
     Path,
     Union,
     Flat,
-    Entry
+    Entry,
+    Dict,
+    Int,
+    Float,
+    name,
+    TYPE
 )
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
@@ -34,9 +39,9 @@ class json:
     def write(json_data: Json={}, output_file: Path='') -> Nill:
         try:
             with open(output_file, 'w') as file:
-                if isinstance(json_data, str):
+                if isinstance(json_data, Str):
                     file.write(json_data)
-                elif isinstance(json_data, dict):
+                elif isinstance(json_data, Dict):
                     json_.dump(json_data, file, indent=4)
                 else:
                     file.write(str(json_data))
@@ -55,10 +60,10 @@ class json:
     def flat(json_data: Json) -> Flat:
         flat_dict = {}
         def _flatten(item: Any, parent_key: Str = "") -> Nill:
-            if isinstance(item, dict):
+            if isinstance(item, Dict):
                 for key, value in item.items():
-                    if not isinstance(key, (str, int, float)):
-                        raise JsonErr(f"Invalid key type encountered: {type(key)}. Keys must be strings, integers, or floats.")
+                    if not isinstance(key, (Str, Int, Float)):
+                        raise JsonErr(f"Invalid key type encountered: {name(TYPE(key))}. Keys must be strings, integers, or floats.")
                     str_key = str(key)
                     new_key = f"{parent_key}.{str_key}" if parent_key else str_key
                     _flatten(value, new_key)
@@ -86,7 +91,7 @@ class json:
             keys = compound_key.split('.')
             current = nested
             for key in keys[:-1]:
-                if key not in current or not isinstance(current[key], dict):
+                if key not in current or not isinstance(current[key], Dict):
                     current[key] = {}
                 current = current[key]
             current[keys[-1]] = value
@@ -128,11 +133,11 @@ class json:
             keys = entry.split('.')
             value = json_data
             for key in keys:
-                if isinstance(value, dict):
+                if isinstance(value, Dict):
                     if key not in value:
                         return std
                     value = value[key]
-                elif isinstance(value, list):
+                elif isinstance(value, List):
                     try:
                         index = int(key)
                     except ValueError:

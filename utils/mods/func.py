@@ -1,10 +1,12 @@
 from functools import wraps
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, Function, List, Tuple, Str, Dict, Any, Callable
-from utils.mods.helper import _get_globals, _copy_func, _eval_func
+from typed import typed, TYPE, Function, List, Tuple, Str, Dict, Callable, convert
+from utils.mods.helper.func import _get_globals, _copy_func, _eval_func
 from utils.err import FuncErr
 
 class func:
+    Signature = convert(Signature, TYPE)
+    Parameter = convert(Signature, TYPE)
     @typed
     def signature(f: Function) -> Signature:
         try:
@@ -29,7 +31,7 @@ class func:
             raise FuncErr(e)
 
     @typed
-    def globals(f: Function) -> Dict(Any):
+    def globals(f: Function) -> Dict:
         try:
             return  _get_globals(f)
         except Exception as e:
@@ -59,7 +61,7 @@ class func:
             raise FuncErr(e)
 
     @typed
-    def eval(f: Function, **fixed_vars: Dict(Any)) -> Function:
+    def eval(f: Function, **fixed_vars: Dict) -> Function:
         try:
             return _eval_func(f, **fixed_vars)
         except Exception as e:
