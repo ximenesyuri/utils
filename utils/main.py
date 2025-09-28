@@ -14,3 +14,4 @@ from utils.mods.str      import str
 from utils.mods.lib      import lib
 from utils.mods.md       import md
 from utils.mods.func     import func
+from utils.mods.text     import text

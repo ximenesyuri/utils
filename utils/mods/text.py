@@ -14,7 +14,7 @@ from typed import (
     Nill
 )
 
-class str:
+class text:
     @typed
     def join(iterator: List(Any)=[], separator: Str='') -> Str:
         return separator.join(iterator)
@@ -83,3 +83,7 @@ class str:
             clean_slug = ''.join(c for c in slug if c.isalnum() or c == '-')
             return clean_slug
         return (str.slugify(string) for string in strings)
+
+    @typed
+    def to_list(string: Str) -> List(Str):
+        return [item.strip() for item in string.split(',')]
