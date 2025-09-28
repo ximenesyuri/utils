@@ -158,9 +158,9 @@ class json:
         Comma-separated strings converted to lists.
         """
         if isinstance(json_data, dict):
-            return {k: fix_lists(v) for k, v in json_data.items()}
+            return {k: json.fix_lists(v) for k, v in json_data.items()}
         elif isinstance(json_data, list):
-            return [fix_lists(elem) for elem in json_data]
+            return [json.fix_lists(elem) for elem in json_data]
         elif isinstance(json_data, str) and ',' in json_data:
             return [item.strip() for item in json_data.split(',')]
         else:
