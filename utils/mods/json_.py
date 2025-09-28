@@ -153,6 +153,20 @@ class json:
     get = get_entry
 
     @typed
+    def fix_lists(json_data: Json) -> Json:
+        """
+        Comma-separated strings converted to lists.
+        """
+        if isinstance(json_data, dict):
+            return {k: fix_lists(v) for k, v in json_data.items()}
+        elif isinstance(data, list):
+            return [fix_lists(elem) for elem in json_data]
+        elif isinstance(json_data, str) and ',' in json_data:
+            return [item.strip() for item in json_data.split(',')]
+        else:
+            return json_data
+
+    @typed
     def entry_has_value(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Bool:
         if json.has_entry(entry=entry, json_data=json_data):
             value_ = json.get_entry(entry=entry, json_data=json_data)
