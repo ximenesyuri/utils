@@ -3,7 +3,7 @@ import re
 from typed import (
     typed,
     List,
-    Any,
+    Nat,
     Str,
     Tuple,
     Union,
@@ -16,7 +16,7 @@ from typed import (
 
 class text:
     @typed
-    def join(iterator: List(Any)=[], separator: Str='') -> Str:
+    def join(iterator: List, separator: Str) -> Str:
         return separator.join(iterator)
 
     @typed
@@ -71,6 +71,10 @@ class text:
     @typed
     def escape(string: Str) -> Str:
         return re.escape(string)
+
+    @typed
+    def search(string: Str, pattern: Pattern, group: Nat=0) -> Str:
+        return re.search(pattern, string).group(group)
 
     @typed
     def slugify(*strings: Tuple(Str)) -> Union(Tuple(Str), Str, Nill):
