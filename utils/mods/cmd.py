@@ -140,6 +140,17 @@ class cmd:
     mkd = mkdir
 
     @typed
+    def clean(path: Path) -> Nill:
+        try:
+            path_to_clean = Path_(path)
+            if path_to_clean.is_dir():
+                cmd.rm(path)
+            with open(path, 'w') as file:
+                file.write('')
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
     def touch(path: Path="") -> Nill:
         try:
             path_to_create = Path_(path)
