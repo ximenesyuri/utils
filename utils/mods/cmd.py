@@ -143,10 +143,11 @@ class cmd:
     def clean(path: Path) -> Nill:
         try:
             path_to_clean = Path_(path)
-            if path_to_clean.is_dir():
-                cmd.rm(path)
-            with open(path, 'w') as file:
-                file.write('')
+            if path_to_clean.exists():
+                if path_to_clean.is_dir():
+                    cmd.rm(path)
+                with open(path, 'w') as file:
+                    file.write('')
         except Exception as e:
             raise CmdErr(e)
 
