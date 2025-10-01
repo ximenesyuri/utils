@@ -146,6 +146,7 @@ class cmd:
             if path_to_clean.exists():
                 if path_to_clean.is_dir():
                     cmd.rm(path)
+                    cmd.mkdir(path)
                 with open(path, 'w') as file:
                     file.write('')
         except Exception as e:
