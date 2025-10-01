@@ -28,7 +28,6 @@ class img:
                 parent   = path.parent(source)
                 filename = path.filename(path.basename(source))
                 target   = path.join(parent, f'{filename}.webp')
-            lib.install('Pillow')
             from PIL import Image
             with Image.open(source) as image:
                 image.save(target, 'webp')
