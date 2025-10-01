@@ -30,8 +30,8 @@ class img:
                 target   = path.join(parent, f'{filename}.webp')
             lib.install('Pillow')
             from PIL import Image
-            with Image.open(source) as img:
-                img.save(target, 'webp')
+            with Image.open(source) as image:
+                image.save(target, 'webp')
         except Exception as e:
             raise ImgErr(e)
 
