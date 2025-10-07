@@ -32,4 +32,4 @@ class lib:
             subprocess.check_call([pip_executable, 'install', lib, '-q'])
             return f"'{lib}' has been installed in venv: {venv}"
         except subprocess.CalledProcessError as e:
-            return f"Error installing '{lib}' in venv: {venv}. Detail: {str(e)}"
+            return f"Error installing '{lib}' in venv: {venv}. Detail: {str(e)}" 
