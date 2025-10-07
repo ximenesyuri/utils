@@ -91,3 +91,7 @@ class text:
     @typed
     def to_list(string: Str) -> List(Str):
         return [item.strip() for item in string.split(',')]
+
+    @typed
+    def camel_to_snake(name: Str) -> Str:
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
