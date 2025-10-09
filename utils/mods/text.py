@@ -93,5 +93,10 @@ class text:
         return [item.strip() for item in string.split(',')]
 
     @typed
-    def camel_to_snake(name: Str) -> Str:
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+    def camel_to_snake(string: Str) -> Str:
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
+
+    @typed
+    def snake_to_camel(string: Str) -> Str:
+        parts = string.split('_')
+        return ''.join(word.capitalize() for word in parts)
