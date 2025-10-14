@@ -1,12 +1,12 @@
 from functools import wraps
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, TYPE, Function, List, Tuple, Str, Dict, Callable, convert
-from utils.mods.helper.func import _get_globals, _copy_func, _eval_func
+from typed import typed, TYPE, Function, Tuple, Str, Dict, convert
+from utils.mods.helper.func import _get_globals, _copy_func, _eval_func, _find_in_stack
 from utils.err import FuncErr
 
 class func:
     Signature = convert(Signature, TYPE)
-    Parameter = convert(Signature, TYPE)
+    Parameter = convert(Parameter, TYPE)
     @typed
     def signature(f: Function) -> Signature:
         try:
@@ -18,7 +18,7 @@ class func:
     @typed
     def params(f: Function) -> Tuple(Parameter):
         try:
-            return (param for param in signature(f).parameters.values())
+            return tuple(param for param in signature(f).parameters.values())
         except Exception as e:
             raise FuncErr(e)
     args = params
@@ -44,12 +44,28 @@ class func:
         except Exception as e:
             raise FuncErr(e)
 
-    @typed
     def unwrap(f: Function) -> Function:
+        seen = set()
+        candidate = f
+        possible_attrs = ['__wrapped__', '__func__', 'func', 'f', '__func', 'function']
+
         try:
-            while hasattr(f, '__wrapped__'):
-                f = f.__wrapped__
-            return f
+            while True:
+                if id(candidate) in seen:
+                    break
+                seen.add(id(candidate))
+                for attr in possible_attrs:
+                    if hasattr(candidate, attr):
+                        candidate = getattr(candidate, attr)
+                        break
+                else:
+                    break
+            if isinstance(candidate, Function):
+                return candidate
+            found = _find_in_stack(candidate)
+            if isinstance(found, Function):
+                return found
+            raise FuncErr("Could not unwrap to a function object.")
         except Exception as e:
             raise FuncErr(e)
 

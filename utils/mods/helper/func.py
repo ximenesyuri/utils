@@ -1,8 +1,9 @@
+import sys
 import ast
 import inspect
 import textwrap
-from functools import wraps, WRAPPER_ASSIGNMENTS, update_wrapper
-from inspect import signature, Signature, Parameter, _empty, getsource, cleandoc
+from functools import update_wrapper
+from inspect import signature, Signature, Parameter, _empty, getsource
 from typed import typed, Function, Set, Any, Str, Dict, Bool
 
 @typed
@@ -204,3 +205,15 @@ def _eval_func(func: Function, **fixed_kwargs: Dict(Any)) -> Function:
         wrapper.__annotations__ = dict(func.__annotations__)
 
     return wrapper
+
+@typed
+def _find_in_stack(target: Function) -> Any:
+    for frame_info in inspect.stack():
+        frame = frame_info.frame
+        for obj in frame.f_locals.values():
+            if obj is target:
+                return obj
+            if hasattr(obj, '__code__') and hasattr(target, '__code__'):
+                if obj.__code__ is target.__code__:
+                    return obj
+    return None
