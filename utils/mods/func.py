@@ -1,13 +1,13 @@
 from functools import wraps
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, TYPE, Function, Tuple, Str, Dict, convert
+from typed import typed, TYPE, Function, Tuple, Str, Dict, convert, Any
 from utils.mods.helper.func import _get_globals, _copy_func, _eval_func, _find_in_stack
 from utils.err import FuncErr
 
-class func:
-    Signature = convert(Signature, TYPE)
-    Parameter = convert(Parameter, TYPE)
+Signature = convert(Signature, TYPE)
+Parameter = convert(Parameter, TYPE)
 
+class func:
     @typed
     def signature(f: Function) -> Signature:
         try:
@@ -18,7 +18,7 @@ class func:
 
     class params:
         @typed
-        def __call__(f: Function) -> Tuple(Parameter):
+        def __new__(self: Any, f: Function) -> Tuple(Parameter):
             try:
                 return tuple(param for param in signature(f).parameters.values())
             except Exception as e:
@@ -27,28 +27,28 @@ class func:
         @typed
         def name(f: Function) -> Tuple(Str):
             try:
-                return tuple(param for param in signature(f).parameters.values().name)
+                return tuple(param.name for param in signature(f).parameters.values())
             except Exception as e:
                 raise FuncErr(e)
 
         @typed
         def kind(f: Function) -> Tuple(Str):
             try:
-                return tuple(param for param in signature(f).parameters.values().kind)
+                return tuple(param.kind for param in signature(f).parameters.values())
             except Exception as e:
                 raise FuncErr(e)
 
         @typed
         def type(f: Function) -> Tuple(TYPE):
             try:
-                return tuple(param for param in signature(f).parameters.values().annotation)
+                return tuple(param.annotation for param in signature(f).parameters.values())
             except Exception as e:
                 raise FuncErr(e)
 
         @typed
         def default(f: Function) -> Tuple:
             try:
-                return tuple(param for param in signature(f).parameters.values().default)
+                return tuple(param.default for param in signature(f).parameters.values())
             except Exception as e:
                 raise FuncErr(e)
 
