@@ -7,6 +7,7 @@ from utils.err import FuncErr
 class func:
     Signature = convert(Signature, TYPE)
     Parameter = convert(Parameter, TYPE)
+
     @typed
     def signature(f: Function) -> Signature:
         try:
@@ -15,12 +16,42 @@ class func:
             raise FuncErr(e)
     sig = signature
 
-    @typed
-    def params(f: Function) -> Tuple(Parameter):
-        try:
-            return tuple(param for param in signature(f).parameters.values())
-        except Exception as e:
-            raise FuncErr(e)
+    class params:
+        @typed
+        def __call__(f: Function) -> Tuple(Parameter):
+            try:
+                return tuple(param for param in signature(f).parameters.values())
+            except Exception as e:
+                raise FuncErr(e)
+
+        @typed
+        def name(f: Function) -> Tuple(Str):
+            try:
+                return tuple(param for param in signature(f).parameters.values().name)
+            except Exception as e:
+                raise FuncErr(e)
+
+        @typed
+        def kind(f: Function) -> Tuple(Str):
+            try:
+                return tuple(param for param in signature(f).parameters.values().kind)
+            except Exception as e:
+                raise FuncErr(e)
+
+        @typed
+        def type(f: Function) -> Tuple(TYPE):
+            try:
+                return tuple(param for param in signature(f).parameters.values().annotation)
+            except Exception as e:
+                raise FuncErr(e)
+
+        @typed
+        def default(f: Function) -> Tuple:
+            try:
+                return tuple(param for param in signature(f).parameters.values().default)
+            except Exception as e:
+                raise FuncErr(e)
+
     args = params
 
     @typed
