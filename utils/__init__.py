@@ -1,4 +1,4 @@
-from utils.mods.cmd      import cmd
+from utils.mods.cmd      import cmd as c
 from utils.mods.json_    import json
 from utils.mods.table    import table
 from utils.mods.color    import color

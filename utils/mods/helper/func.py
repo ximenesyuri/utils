@@ -7,7 +7,7 @@ from inspect import signature, Signature, Parameter, _empty, getsource
 from typed import typed, Function, Set, Any, Str, Dict, Bool
 
 @typed
-def _extract_recursive_globals(func: Function) -> Set(Any):
+def _extract_recursive_deps(func: Function) -> Set(Any):
     src = getsource(func)
     src = textwrap.dedent(src)
     tree = ast.parse(src)
@@ -45,9 +45,9 @@ def _extract_recursive_globals(func: Function) -> Set(Any):
     return referenced
 
 @typed
-def _get_globals(func: Function, extra_search_modules: Bool=True) -> Dict(Any):
+def _get_deps(func: Function, extra_search_modules: Bool=True) -> Dict(Any):
     base = func.__globals__.copy()
-    needed = _extract_recursive_globals(func)
+    needed = _extract_recursive_deps(func)
     missing = [name for name in needed if name not in base]
     for name in missing:
         found = False

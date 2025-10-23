@@ -1,5 +1,9 @@
 import importlib
-from typed import typed, Any, Entry, Bool, Dict, Tuple, convert, TYPE, name
+import importlib.util
+import sys
+import ast
+import inspect
+from typed import typed, Any, Entry, Str, Bool, Dict, Union, Tuple, convert, TYPE, name, Nill
 from utils.err import ModErr
 from types import ModuleType
 
@@ -116,3 +120,66 @@ class mod:
             return {name: mod.get_global(module, name) for name in dir(mod.get(module)) if not name.startswith('_')}
         except Exception as e:
             raise ModErr(e)
+
+    @typed
+    def imports(module: Entry) -> Union(Dict(Str), Dict(Dict(Str))):
+        """
+        Returns the dictionary of imports of a given module entry.
+        """
+        try:
+            if not mod.exists(module):
+                raise ModErr(f"The given module '{module}' does not exists.")
+            spec = importlib.util.find_spec(module)
+            if not spec or not spec.origin or not spec.origin.endswith('.py'):
+                raise ImportError(f"Cannot find source for module {module}")
+
+            with open(spec.origin, 'r', encoding='utf-8') as f:
+                source = f.read()
+            tree = ast.parse(source, filename=spec.origin)
+
+            imports = []
+
+            for node in ast.iter_child_nodes(tree):
+                if isinstance(node, ast.ImportFrom) and node.module != "__future__":
+                    for alias in node.names:
+                        if alias.asname:
+                            imports.append((node.lineno, {node.module: {alias.name: alias.asname}}))
+                        else:
+                            imports.append((node.lineno, {node.module: alias.name}))
+                elif isinstance(node, ast.Import):
+                    for alias in node.names:
+                        if alias.asname:
+                            imports.append((node.lineno, {alias.name: {'': alias.asname}}))
+                        else:
+                            imports.append((node.lineno, {alias.name: ''}))
+            return tuple(import_dict for _, import_dict in sorted(imports, key=lambda x: x[0]))
+        except Exception as e:
+            raise ModErr(e)
+
+    @typed
+    def import_all(module: Entry) -> Nill:
+        caller_globals = sys._getframe(2).f_globals
+
+        mod = importlib.import_module(module)
+        spec = importlib.util.find_spec(module)
+        if not spec or not spec.origin or not spec.origin.endswith('.py'):
+            raise ImportError(f"Cannot find source for module {module}")
+        with open(spec.origin, 'r', encoding='utf-8') as f:
+            source = f.read()
+        tree = ast.parse(source, filename=spec.origin)
+
+        defined_names = set()
+        for node in tree.body:
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                defined_names.add(node.name)
+            elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+                if isinstance(node, ast.Assign):
+                    for target in node.targets:
+                        if isinstance(target, ast.Name):
+                            defined_names.add(target.id)
+                elif isinstance(node, ast.AnnAssign):
+                    if isinstance(node.target, ast.Name):
+                        defined_names.add(node.target.id)
+        for name in defined_names:
+            if name in mod.__dict__:
+                caller_globals[name] = mod.__dict__[name]

@@ -1,7 +1,7 @@
 from functools import wraps
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, TYPE, Function, Tuple, Str, Dict, convert, Any
-from utils.mods.helper.func import _get_globals, _copy_func, _eval_func, _find_in_stack
+from typed import typed, TYPE, Function, Tuple, Str, Dict, convert, Any, null
+from utils.mods.helper.func import _get_deps, _copy_func, _eval_func, _find_in_stack
 from utils.err import FuncErr
 
 Signature = convert(Signature, TYPE)
@@ -46,12 +46,11 @@ class func:
                 raise FuncErr(e)
 
         @typed
-        def default(f: Function) -> Tuple:
+        def default_value(f: Function) -> Tuple:
             try:
                 return tuple(param.default for param in signature(f).parameters.values())
             except Exception as e:
                 raise FuncErr(e)
-
     args = params
 
     @typed
@@ -62,9 +61,9 @@ class func:
             raise FuncErr(e)
 
     @typed
-    def globals(f: Function) -> Dict:
+    def deps(f: Function) -> Dict:
         try:
-            return  _get_globals(f)
+            return  _get_deps(f)
         except Exception as e:
             raise FuncErr(e)
 
@@ -75,6 +74,7 @@ class func:
         except Exception as e:
             raise FuncErr(e)
 
+    @typed
     def unwrap(f: Function) -> Function:
         seen = set()
         candidate = f
@@ -112,4 +112,4 @@ class func:
         try:
             return _eval_func(f, **fixed_vars)
         except Exception as e:
-            raise FuncErr(e)
+            raise FuncErr(e) 
