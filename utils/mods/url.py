@@ -4,7 +4,7 @@ from utils.err import UrlErr
 
 class url:
     @typed
-    def hostname(u: Url('http', 'https', 'file', 'ssh')) -> Maybe(Hostname):
+    def hostname(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Hostname):
         try:
             return urlparse(u).hostname
         except Exception as e:
@@ -12,14 +12,14 @@ class url:
     domain = hostname
 
     @typed
-    def tld(u: Url('http', 'https')) -> Maybe(Str):
+    def tld(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Str):
         try:
             return url.hostname(u).split('.')[-1]
         except Exception as e:
             raise UrlErr(e)
 
     @typed
-    def subdomain(u: Url('http', 'https')) -> Maybe(Str):
+    def subdomain(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Str):
         try:
             parts = url.hostname(u).split('.')
             if len(parts) > 2:
@@ -29,7 +29,7 @@ class url:
             raise UrlErr(e)
 
     @typed
-    def scheme(u: Url('http', 'https')) -> Protocol:
+    def scheme(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Protocol:
         try:
             return urlparse(u).scheme
         except Exception as e:
@@ -38,14 +38,14 @@ class url:
 
     class query:
         @typed
-        def __new__(cls: Any, u: Url('http', 'https')) -> Str:
+        def __new__(cls: Any, u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Str:
             try:
                 return urlparse(u).query
             except Exception as e:
                 raise UrlErr(e)
 
         @typed
-        def params(u: Url('http', 'https')) -> Dict(Str, List(Str)):
+        def params(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Dict(Str, List(Str)):
             try:
                 query = parse_qs(urlparse(u).query)
                 query_dict = {}
@@ -61,10 +61,34 @@ class url:
                 raise UrlErr(e)
 
     @typed
-    def netloc(u: Url('http', 'https')) -> Str:
+    def netloc(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Str):
         try:
             return urlparse(u).netloc
         except Exception as e:
             raise UrlErr(e)
 
-    args = params
+    @typed
+    def path(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Str):
+        try:
+            return urlparse(u).path
+        except Exception as e:
+            raise UrlErr(e)
+
+    @typed
+    def port(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Str):
+        try:
+            return urlparse(u).port
+        except Exception as e:
+            raise UrlErr(e)
+
+    @typed
+    def base_url(u: Url('http', 'https', 'file', 'ssh', 'ftp')) -> Maybe(Str):
+        try:
+            base_url = []
+            if url.scheme(u): base_url.append(url.scheme(u) + "://")
+            if url.netloc(u): base_url.append(url.netloc(u))
+            if url.path(u):   base_url.append(url.path(u))
+            return ''.join(base_url)
+        except Exception as e:
+            raise UrlErr(e)
+
