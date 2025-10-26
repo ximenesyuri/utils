@@ -2,7 +2,6 @@ import importlib
 import importlib.util
 import sys
 import ast
-import inspect
 from typed import typed, Any, Entry, Str, Bool, Dict, Union, Tuple, convert, TYPE, name, Nill
 from utils.err import ModErr
 from types import ModuleType

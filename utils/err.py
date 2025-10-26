@@ -14,3 +14,4 @@ class YMLErr(Exception): pass
 class StaticErr(Exception): pass
 class FuncErr(Exception): pass
 class ModErr(Exception): pass
+class UrlErr(Exception): pass
