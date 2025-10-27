@@ -25,14 +25,14 @@ class func:
                 raise FuncErr(e)
 
         @typed
-        def name(f: Function) -> Tuple(Str):
+        def name(f: Function) -> Tuple:
             try:
                 return tuple(param.name for param in signature(f).parameters.values())
             except Exception as e:
                 raise FuncErr(e)
 
         @typed
-        def kind(f: Function) -> Tuple(Str):
+        def kind(f: Function) -> Tuple:
             try:
                 return tuple(param.kind for param in signature(f).parameters.values())
             except Exception as e:
