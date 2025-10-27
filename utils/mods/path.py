@@ -1,16 +1,31 @@
 import os
 import sys
+import inspect
 from typed import Bool, Path, Union, Tuple, Int, Str, typed, Nill
 from utils.err import PathErr
 
 class path:
     @typed
-    def cwd() -> Path:
+    def cwd(*paths: Tuple(Path)) -> Path:
         try:
-            return os.getcwd()
+            if len(paths) == 0:
+                return os.getcwd()
+            return path.join(os.getcwd(), *paths)
         except Exception as e:
             raise PathErr(e)
     pwd = cwd
+
+    @typed
+    def here(*paths: Tuple(Path)) -> Path:
+        try:
+            caller_frame = inspect.stack()[2]
+            caller_filepath = caller_frame.filename
+            here_ = os.path.dirname(os.path.abspath(caller_filepath))
+            if len(paths) == 0:
+                return here_
+            return path.join(here_, *paths)
+        except Exception as e:
+            raise PathErr(e)
 
     @typed
     def exists(*paths: Tuple(Path)) -> Bool:
