@@ -3,9 +3,9 @@ from typed import typed, HEX, RGB, HSL
 class color:
     @typed
     def rgb_to_hex(rgb: RGB) -> HEX:
-        red   = rgb[0] * 255
-        green = rgb[1] * 255
-        blue  = rgb[2] * 255
+        red   = rgb[0]
+        green = rgb[1]
+        blue  = rgb[2]
         return f'#{red:02x}{green:02x}{blue:02x}'
 
     @typed
