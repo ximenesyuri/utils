@@ -5,7 +5,7 @@ from utils.err import ImgErr
 
 class img:
     @typed
-    def download(url: Url("http", "https")='https://', path: Maybe(Path)=Nill) -> Nill:
+    def download(url: Url("http", "https"), path: Maybe(Path)=None) -> Nill:
         try:
             lib.install('requests')
             import requests
@@ -28,6 +28,7 @@ class img:
                 parent   = path.parent(source)
                 filename = path.filename(path.basename(source))
                 target   = path.join(parent, f'{filename}.webp')
+            lib.install('Pillow')
             from PIL import Image
             with Image.open(source) as image:
                 image.save(target, 'webp')
