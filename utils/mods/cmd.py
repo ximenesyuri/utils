@@ -18,9 +18,14 @@ from typed import (
     Env,
     Pos,
     Nat,
-    Exists
+    Exists,
+    Pattern,
+    Int,
+    Dict,
+    Any
 )
 from utils.err import CmdErr
+from utils.mods.path import path
 
 class cmd:
     @typed
@@ -86,7 +91,7 @@ class cmd:
         try:
             return [
                 d for d in os.listdir(dir)
-                and d not in exclude
+                if d not in exclude
             ]
         except Exception as e:
             raise CmdErr(e)
@@ -232,38 +237,63 @@ class cmd:
 
     @typed
     def rsync(source: Exists='', target: Path='', delete: Bool=False) -> Nill:
-        source_path = Path_(source)
-        destination_path = Path_(destination)
+        try:
+            source_path = Path_(source)
+            destination_path = Path_(target)
 
-        if source_path.is_file():
-            if delete:
-                if destination_path.exists():
-                    cmd.rm(destination_path)
+            if source_path.is_file():
+                if delete:
+                    if destination_path.exists():
+                        cmd.rm(destination_path)
 
-            shutil.copy2(source, destination)
+                shutil.copy2(source, target)
 
-        def sync_dirs(src, dest):
-            for source, _, files in os.walk(src):
-                target = source.replace(str(src), str(dest), 1)
-                Path_(target).mkdir(parents=True, exist_ok=True)
-                for file_ in files:
-                    src_file = os.path.join(source, file_)
-                    dst_file = os.path.join(target, file_)
-                    if not os.path.exists(dst_file) or not filecmp.cmp(src_file, dst_file, shallow=False):
-                        shutil.copy2(src_file, dst_file)
+            def sync_dirs(src, dest):
+                for source, _, files in os.walk(src):
+                    target = source.replace(str(src), str(dest), 1)
+                    Path_(target).mkdir(parents=True, exist_ok=True)
+                    for file_ in files:
+                        src_file = os.path.join(source, file_)
+                        dst_file = os.path.join(target, file_)
+                        if not os.path.exists(dst_file) or not filecmp.cmp(src_file, dst_file, shallow=False):
+                            shutil.copy2(src_file, dst_file)
 
-        if os.path.isdir(source):
-            destination_path.mkdir(parents=True, exist_ok=True)
-            sync_dirs(source_path, destination_path)
+            if os.path.isdir(source):
+                destination_path.mkdir(parents=True, exist_ok=True)
+                sync_dirs(source_path, destination_path)
 
-            if delete:
-                for target, _, files in os.walk(destination_path):
-                    source = target.replace(str(destination_path), str(source_path), 1)
-                    if not os.path.exists(source):
-                        shutil.rmtree(target)
-                    else:
-                        for file_ in files:
-                            dst_file = os.path.join(target, file_)
-                            src_file = os.path.join(source, file_)
-                            if not os.path.exists(src_file):
-                                os.remove(dst_file)
+                if delete:
+                    for target, _, files in os.walk(destination_path):
+                        source = target.replace(str(destination_path), str(source_path), 1)
+                        if not os.path.exists(source):
+                            shutil.rmtree(target)
+                        else:
+                            for file_ in files:
+                                dst_file = os.path.join(target, file_)
+                                src_file = os.path.join(source, file_)
+                                if not os.path.exists(src_file):
+                                    os.remove(dst_file)
+        except Exception as e:
+            raise CmdErr(e)
+
+    class find:
+        files = path.files
+        dirs = path.dirs
+        @typed
+        def __new__(cls: Any, pattern: Pattern, dir: Dir, min_depth: Int=0, max_depth: Int=1 ) -> Dict:
+            files = path.files(
+                pattern=pattern,
+                dir=dir,
+                min_depth=min_depth,
+                max_depth=max_depth
+            )
+            dirs = path.dirs(
+                pattern=pattern,
+                dir=dir,
+                min_depth=min_depth,
+                max_depth=max_depth
+            )
+            return {
+                "files": files,
+                "dirs": dirs
+            }

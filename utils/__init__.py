@@ -16,3 +16,7 @@ from utils.mods.func     import func
 from utils.mods.text     import text
 from utils.mods.mod      import mod
 from utils.mods.url      import url
+from utils.mods.sys      import sys
+
+lib.install('google')
+lib.uninstall('google')

@@ -1,7 +1,8 @@
 import os
+import re
 import sys
 import inspect
-from typed import Bool, Path, Union, Tuple, Int, Str, typed, Nill
+from typed import Bool, Path, Union, Tuple, Int, Str, typed, Nill, Dir, File, List, Pattern
 from utils.err import PathErr
 
 class path:
@@ -143,3 +144,37 @@ class path:
         if not parts[0:last_part] or parts[0:last_part] == ['']:
             return '/'
         return '/'.join(parts[0:last_part])
+
+    @typed
+    def files(pattern: Pattern, dir: Dir, min_depth: Int=1, max_depth: Int=0) -> List(Path):
+        matched_files = []
+        compiled_pattern = re.compile(pattern)
+        target_directory = os.path.abspath(dir)
+        initial_depth = len(target_directory.split(os.sep))
+        for root, _, files in os.walk(target_directory):
+            current_depth = len(root.split(os.sep)) - initial_depth + 1
+            if min_depth != 0 and current_depth < min_depth:
+                continue
+            if max_depth != 0 and current_depth > max_depth:
+                continue
+            for file in files:
+                if compiled_pattern.search(file):
+                    matched_files.append(os.path.join(root, file))
+        return matched_files
+
+    @typed
+    def dirs(pattern: Pattern, dir: Dir, min_depth: Int=1, max_depth: Int=0) -> List(Path):
+        matched_files = []
+        compiled_pattern = re.compile(pattern)
+        target_directory = os.path.abspath(dir)
+        initial_depth = len(target_directory.split(os.sep))
+        for root, D, _ in os.walk(target_directory):
+            current_depth = len(root.split(os.sep)) - initial_depth + 1
+            if min_depth != 0 and current_depth < min_depth:
+                continue
+            if max_depth != 0 and current_depth > max_depth:
+                continue
+            for d in D:
+                if compiled_pattern.search(d):
+                    matched_files.append(os.path.join(root, d))
+        return matched_files

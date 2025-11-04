@@ -9,9 +9,10 @@ class JsonErr(Exception): pass
 class TableErr(Exception): pass
 class MDErr(Exception): pass
 class PathErr(Exception): pass
-class StrErr(Exception): pass
 class YMLErr(Exception): pass
 class StaticErr(Exception): pass
 class FuncErr(Exception): pass
 class ModErr(Exception): pass
 class UrlErr(Exception): pass
+class LibErr(Exception): pass
+class SysErr(Exception): pass
