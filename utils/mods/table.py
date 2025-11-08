@@ -1,5 +1,4 @@
 from typed import typed, Json, Any, Str, List, Table
-from utils.mods.json_ import json
 from utils.err import TableErr
 
 class table:
