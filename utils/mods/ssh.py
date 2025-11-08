@@ -20,7 +20,8 @@ class ssh:
                 from utils import cmd, file
                 tmp_file = cmd.mktemp.file()
                 file.write(tmp_file, key)
-                subprocess.check_call(["ssh-add", key])
+                subprocess.check_call(["ssh-add", tmp_file])
+                cmd.rm(tmp_file)
                 return
             except Exception as e:
                 raise SSHErr(e)
