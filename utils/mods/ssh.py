@@ -1,5 +1,6 @@
 import os
 import subprocess
+import stat
 from typed import typed, Path, Nill, Union, SSHKey
 from utils.err import SSHErr
 
@@ -20,7 +21,7 @@ class ssh:
                 from utils import cmd, file
                 tmp_file = cmd.mktemp.file()
                 file.write(tmp_file, key)
-                os.chmod(tmp_file, 600)
+                os.fchmod(tmp_file.fileno(), stat.S_IRUSR | stat.S_IWUSR)
                 subprocess.check_call(["ssh-add", tmp_file])
                 cmd.rm(tmp_file)
                 return
