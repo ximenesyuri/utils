@@ -21,7 +21,7 @@ class ssh:
                 from utils import cmd, file
                 tmp_file = cmd.mktemp.file()
                 file.write(tmp_file, key)
-                os.fchmod(tmp_file.fileno(), stat.S_IRUSR | stat.S_IWUSR)
+                os.chmod(tmp_file, stat.S_IRUSR | stat.S_IWUSR)
                 subprocess.check_call(["ssh-add", tmp_file])
                 cmd.rm(tmp_file)
                 return
