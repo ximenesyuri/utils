@@ -1,6 +1,6 @@
 import os
 import subprocess
-from typed import typed, Str, Bool, Maybe, Nill
+from typed import typed, Str, Tuple, Bool, Maybe, Nill
 from utils.err import LibErr
 
 class lib:
@@ -62,7 +62,7 @@ class lib:
             raise LibErr(e)
 
     @typed
-    def install(*libs: Str) -> Nill:
+    def install(*libs: Tuple(Str)) -> Nill:
         try:
             for l in libs:
                 if not lib.is_installed(l):

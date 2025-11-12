@@ -52,7 +52,10 @@ class json:
     def print(json_data: Json={}, colored: Bool=False, indent: Int=4) -> Nill:
         if colored:
             from utils import lib
-            lib.install('pygments')
+            try:
+                lib.install('pygments')
+            except:
+                pass
             from pygments import highlight
             from pygments.lexers import JsonLexer
             from pygments.formatters import TerminalFormatter
