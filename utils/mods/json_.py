@@ -49,7 +49,7 @@ class json:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
 
     @typed
-    def print(json_data: Json={}, colored=False, indent=4) -> Nill:
+    def print(json_data: Json={}, colored: Bool=False, indent: Int=4) -> Nill:
         if colored:
             from utils import lib
             lib.install('pygments')

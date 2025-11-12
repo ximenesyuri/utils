@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import datetime as _datetime
 
 class date:
     def now(format="%d/%m/%Y"):
