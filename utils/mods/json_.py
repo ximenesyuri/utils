@@ -49,8 +49,16 @@ class json:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
 
     @typed
-    def print(json_data: Json={}) -> Nill:
-        print(json_.dumps(json_data, indent=4))
+    def print(json_data: Json={}, colored=False, indent=4) -> Nill:
+        if colored:
+            from utils import lib
+            lib.install('pygments')
+            from pygments import highlight
+            from pygments.lexers import JsonLexer
+            from pygments.formatters import TerminalFormatter
+            print(highlight(json_.dumps(json_data, indent=indent), JsonLexer(), TerminalFormatter()))
+        else:
+            print(json_.dumps(json_data, indent=indent))
 
     @typed
     def new(*kwargs: Json) -> Json:
