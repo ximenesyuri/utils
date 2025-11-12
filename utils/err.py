@@ -1,7 +1,7 @@
 class CmdErr(Exception): pass
 class CompressErr(Exception): pass
 class ColorErr(Exception): pass
-class DateErr(Exception): pass
+class DatetimeErr(Exception): pass
 class EnvErr(Exception): pass
 class FileErr(Exception): pass
 class ImgErr(Exception): pass
