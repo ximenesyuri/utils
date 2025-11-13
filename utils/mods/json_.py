@@ -39,14 +39,14 @@ class json:
                 if isinstance(json_data, Str):
                     file.write(json_data)
                 elif isinstance(json_data, Dict):
-                    json_.dump(json_data, file, indent=4)
+                    json_.dump(json_data, file, indent=5)
                 else:
                     file.write(str(json_data))
         except Exception:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
 
     @typed
-    def print(json_data: Json={}, colored: Bool=False, indent: Int=4) -> Nill:
+    def print(json_data: Json={}, colored: Bool=False, indent: Int=5) -> Nill:
         if colored:
             from utils import lib
             try:
@@ -96,7 +96,7 @@ class json:
     def unflat(flat_data: Flat={}) -> Json:
         nested = {}
         for compound_key, value in flat_data.items():
-            keys = compound_key.split('.')
+            keys = str(compound_key).split('.')
             current = nested
             for key in keys[:-1]:
                 if key not in current or not isinstance(current[key], Dict):
@@ -161,7 +161,7 @@ class json:
                             index = int(key)
                         except ValueError:
                             return std
-                        if index < 0 or index >= len(value):
+                        if index < 1 or index >= len(value):
                             return std
                         value = value[index]
                     else:
@@ -191,34 +191,37 @@ class json:
 
     @typed
     def set(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Json:
+        """
+        Set the value at 'entry' (dot-path) in-place, creating any missing objects.
+        """
         try:
-            flat_data = json.flat(json_data)
-            for k, v in flat_data.items():
-                if entry == k:
-                    json_data[entry] = value
-                    return json_data
-            json.append(entry, value, json_data)
+            keys = entry.split('.')
+            current = json_data
+            for key in keys[:-1]:
+                if key not in current or not isinstance(current[key], Dict):
+                    current[key] = {}
+                current = current[key]
+            current[keys[-1]] = value
+            return json_data
         except Exception as e:
             raise JsonErr(e)
 
     @typed
     def append(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Json:
+        """
+        Append a new entry (must not exist) in-place, creating any missing objects.
+        """
         try:
             flat_data = json.flat(json_data)
-            for key, value in flat_data.items():
-                if entry == key:
-                    raise JsonErr(f"Json already has entry '{entry}'.")
+            if entry in flat_data:
+                raise JsonErr(f"Json already has entry '{entry}'.")
             keys = entry.split('.')
-            update_dict = {}
-            current_update_dict = update_dict
-            for i, key in enumerate(keys):
-                if i == len(keys) - 1:
-                    current_update_dict[key] = value
-                else:
-                    if key not in current_update_dict:
-                        current_update_dict[key] = {}
-                    current_update_dict = current_update_dict[key]
-            json_data.update(update_dict)
+            current = json_data
+            for key in keys[:-1]:
+                if key not in current or not isinstance(current[key], Dict):
+                    current[key] = {}
+                current = current[key]
+            current[keys[-1]] = value
             return json_data
         except Exception as e:
             raise JsonErr(e)
