@@ -106,7 +106,7 @@ class json:
         return nested
 
     @typed
-    def has_entry(entry: Entry='', json_data: Json={}) -> Bool:
+    def has(entry: Entry='', json_data: Json={}) -> Bool:
         try:
             flat_data = json.flat(json_data)
             for key, value in flat_data.items():
@@ -115,10 +115,20 @@ class json:
             return False
         except Exception as e:
             raise JsonErr(e)
-    has = has_entry
 
     @typed
-    def check_entry_type(entry: Entry='', value_type: TYPE=Nill, json_data: Json={}) -> Bool:
+    def has_value(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Bool:
+        if json.has_entry(entry=entry, json_data=json_data):
+            value_ = json.get_entry(entry=entry, json_data=json_data)
+            if value_:
+                if value == value_:
+                    return True
+                return False
+            raise JsonErr(f"Json data entry is not set: entry='{entry}', json_data='{json_data}'")
+        raise JsonErr(f"Json data has not the given entry: entry='{entry}', json_data='{json_data}'")
+
+    @typed
+    def check_type(entry: Entry='', value_type: TYPE=Nill, json_data: Json={}) -> Bool:
         try:
             flat_data = json.flat(json_data)
             for key, value in flat_data.items():
@@ -129,36 +139,41 @@ class json:
             return False
         except Exception as e:
             raise JsonErr(e)
-    check = check_entry_type
+    check = check_type
 
-    @typed
-    def get_entry(entry: Entry = '', std: Any={}, json_data: Json = {}) -> Any:
-        """
-        Collect an 'entry' from a 'json_data' and return
-        a 'std' value if the 'entry' was not found.
-        """
-        try:
-            keys = entry.split('.')
-            value = json_data
-            for key in keys:
-                if isinstance(value, Dict):
-                    if key not in value:
+    class get:
+        @typed
+        def __new__(cls: Any, entry: Entry = '', std: Any={}, json_data: Json = {}) -> Any:
+            """
+            Collect an 'entry' from a 'json_data' and return
+            a 'std' value if the 'entry' was not found.
+            """
+            try:
+                keys = entry.split('.')
+                value = json_data
+                for key in keys:
+                    if isinstance(value, Dict):
+                        if key not in value:
+                            return std
+                        value = value[key]
+                    elif isinstance(value, List):
+                        try:
+                            index = int(key)
+                        except ValueError:
+                            return std
+                        if index < 0 or index >= len(value):
+                            return std
+                        value = value[index]
+                    else:
                         return std
-                    value = value[key]
-                elif isinstance(value, List):
-                    try:
-                        index = int(key)
-                    except ValueError:
-                        return std
-                    if index < 0 or index >= len(value):
-                        return std
-                    value = value[index]
-                else:
-                    return std
-            return value if value is not None else std
-        except Exception as e:
-            raise JsonErr(e)
-    get = get_entry
+                return value if value is not None else std
+            except Exception as e:
+                raise JsonErr(e)
+
+        @typed
+        def by_value(value: Any=Nill, json_data: Json={}) -> List(Str):
+            flat_data = json.flat(Json(json_data))
+            return [key for key, v in flat_data.items() if v == value]
 
     @typed
     def fix_lists(json_data: Json) -> Json:
@@ -175,34 +190,16 @@ class json:
             return json_data
 
     @typed
-    def entry_has_value(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Bool:
-        if json.has_entry(entry=entry, json_data=json_data):
-            value_ = json.get_entry(entry=entry, json_data=json_data)
-            if value_:
-                if value == value_:
-                    return True
-                return False
-            raise JsonErr(f"Json data entry is not set: entry='{entry}', json_data='{json_data}'")
-        raise JsonErr(f"Json data has not the given entry: entry='{entry}', json_data='{json_data}'")
-    has_value = entry_has_value
-
-    @typed
-    def get_entries_with_given_value(value: Any=Nill, json_data: Json={}) -> List(Str):
-        flat_data = json.flat(Json(json_data))
-        return [key for key, v in flat_data.items() if v == value]
-
-    @typed
-    def set_entry_value(entry: Entry='', new_value: Any=Nill, json_data: Json={}) -> Json:
+    def set(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Json:
         try:
             flat_data = json.flat(json_data)
-            for key, value in flat_data.items():
-                if entry == key:
-                    json_data[entry] = new_value
+            for k, v in flat_data.items():
+                if entry == k:
+                    json_data[entry] = value
                     return json_data
-            raise JsonErr(f"Json has no entry '{entry}'.")
+            json.append(entry, value, json_data)
         except Exception as e:
             raise JsonErr(e)
-    set = set_entry_value
 
     @typed
     def append(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Json:
@@ -225,11 +222,11 @@ class json:
             return json_data
         except Exception as e:
             raise JsonErr(e)
-        add = append
-        update = append
+    add = append
+    update = append
 
     @typed
-    def remove_entries(json_data: Json={}, entries: Union(Entry, List(Entry))="") -> Json:
+    def remove(json_data: Json={}, entries: Union(Entry, List(Entry))="") -> Json:
         """
         Remove given 'entries' of a 'json_data' if they exist
         """
@@ -242,7 +239,6 @@ class json:
                 if entry in flat_json:
                     del flat_json[entry]
         return json.unflat(flat_json)
-    remove = remove_entries
     rm = remove
 
     @typed
