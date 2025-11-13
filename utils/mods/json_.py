@@ -229,7 +229,7 @@ class json:
     update = append
 
     @typed
-    def remove(json_data: Json={}, entries: Union(Entry, List(Entry))="") -> Json:
+    def remove(entries: Union(Entry, List(Entry))="", json_data: Json={}) -> Json:
         """
         Remove given 'entries' of a 'json_data' if they exist
         """
