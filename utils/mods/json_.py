@@ -1,4 +1,3 @@
-import re
 import json as json_
 from typed import (
     typed,
@@ -7,7 +6,6 @@ from typed import (
     Any,
     List,
     Str,
-    Regex,
     Nill,
     Bool,
     Path,
@@ -17,8 +15,7 @@ from typed import (
     Dict,
     Int,
     Float,
-    name,
-    TYPE
+    name
 )
 from utils.mods.path  import path
 from utils.err import JsonErr, PathErr
@@ -32,7 +29,7 @@ class json:
                     return json_.load(file)
             else:
                 raise PathErr(f"path '{json_file}' does not exists or is not a file.")
-        except Exception as e:
+        except Exception:
             raise JsonErr(f"Could not read json file '{json_file}'.")
 
     @typed
@@ -45,7 +42,7 @@ class json:
                     json_.dump(json_data, file, indent=4)
                 else:
                     file.write(str(json_data))
-        except Exception as e:
+        except Exception:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
 
     @typed
@@ -228,6 +225,8 @@ class json:
             return json_data
         except Exception as e:
             raise JsonErr(e)
+        add = append
+        update = append
 
     @typed
     def remove_entries(json_data: Json={}, entries: Union(Entry, List(Entry))="") -> Json:
@@ -243,7 +242,8 @@ class json:
                 if entry in flat_json:
                     del flat_json[entry]
         return json.unflat(flat_json)
-    rm = remove_entries
+    remove = remove_entries
+    rm = remove
 
     @typed
     def replace(entry: Entry='', old: Any=Nill, new: Any=Nill, json_data: Json={}) -> Json:
