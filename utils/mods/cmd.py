@@ -22,14 +22,14 @@ from typed import (
     Pattern,
     Int,
     Dict,
-    Any
+    Tuple
 )
 from utils.err import CmdErr
 from utils.mods.path import path
 
 class cmd:
     @typed
-    def run(cmd_str: Str, cwd: Path='', envs: List(Env)=[], terminate: Bool=True, **kargs: Any) -> Nill:
+    def run(cmd_str: Str, cwd: Path='', envs: List(Env)=[], terminate: Bool=True, **kargs: Any) -> Tuple:
         """
         Execute any system command as a subprocess by passing a command str and environment variables.
         """
