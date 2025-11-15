@@ -46,6 +46,22 @@ class json:
             raise JsonErr(f"Could not write json data to file '{output_file}'.")
 
     @typed
+    def from_str(json_str: Str) -> Json:
+        try:
+            return json_.loads(json_str)
+        except Exception as e:
+            raise JsonErr(e)
+    loads = from_str
+
+    @typed
+    def to_str(json_data: Json) -> Str:
+        try:
+            return json_.dumps(json_data)
+        except Exception as e:
+            raise JsonErr(e)
+    dumps = to_str
+
+    @typed
     def print(json_data: Json={}, colored: Bool=False, indent: Int=5) -> Nill:
         if colored:
             from utils import lib
