@@ -245,19 +245,30 @@ class json:
     update = append
 
     @typed
-    def remove(entries: Union(Entry, List(Entry))="", json_data: Json={}) -> Json:
-        """
-        Remove given 'entries' of a 'json_data' if they exist
-        """
-        flat_json = json.flat(json_data)
-        if isinstance(entries, Entry):
-            if entries in flat_json:
-                del flat_json[entries]
-        else:
-            for entry in entries:
-                if entry in flat_json:
-                    del flat_json[entry]
-        return json.unflat(flat_json)
+    def remove(entries: Union(Entry, List(Entry)) = "", json_data: Json = {}) -> Json:
+        def _remove_one(entry: Entry) -> None:
+            if not entry:
+                return
+            keys = entry.split('.')
+            current = json_data
+            for key in keys[:-1]:
+                if isinstance(current, Dict) and key in current and isinstance(current[key], Dict):
+                    current = current[key]
+                else:
+                    return
+            last = keys[-1]
+            if isinstance(current, Dict) and last in current:
+                del current[last]
+
+        try:
+            if isinstance(entries, list):
+                for e in entries:
+                    _remove_one(e)
+            else:
+                _remove_one(entries)
+            return json_data
+        except Exception as e:
+            raise JsonErr(e)
     rm = remove
 
     @typed
