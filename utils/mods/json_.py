@@ -157,35 +157,35 @@ class json:
             raise JsonErr(e)
     check = check_type
 
-    class get:
-        @typed
-        def __new__(cls: Any, entry: Entry = '', std: Any={}, json_data: Json = {}) -> Any:
-            """
-            Collect an 'entry' from a 'json_data' and return
-            a 'std' value if the 'entry' was not found.
-            """
-            try:
-                keys = entry.split('.')
-                value = json_data
-                for key in keys:
-                    if isinstance(value, Dict):
-                        if key not in value:
-                            return std
-                        value = value[key]
-                    elif isinstance(value, List):
-                        try:
-                            index = int(key)
-                        except ValueError:
-                            return std
-                        if index < 1 or index >= len(value):
-                            return std
-                        value = value[index]
-                    else:
+    @typed
+    def get(entry: Entry='', std: Any={}, json_data: Json={}) -> Any:
+        """
+        Collect an 'entry' from a 'json_data' and return
+        a 'std' value if the 'entry' was not found.
+        """
+        try:
+            keys = entry.split('.')
+            value = json_data
+            for key in keys:
+                if isinstance(value, Dict):
+                    if key not in value:
                         return std
-                return value if value is not None else std
-            except Exception as e:
-                raise JsonErr(e)
+                    value = value[key]
+                elif isinstance(value, List):
+                    try:
+                        index = int(key)
+                    except ValueError:
+                        return std
+                    if index < 1 or index >= len(value):
+                        return std
+                    value = value[index]
+                else:
+                    return std
+            return value if value is not None else std
+        except Exception as e:
+            raise JsonErr(e)
 
+    class search:
         @typed
         def by_value(value: Any=Nill, json_data: Json={}) -> List(Str):
             flat_data = json.flat(Json(json_data))
