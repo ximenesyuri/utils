@@ -5,7 +5,6 @@ from utils.err import LogErr
 
 LogLevel = Enum(Str, 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG')
 
-@typed
 class log:
     def __init__(self, level: LogLevel = 'DEBUG', format: Maybe(Str) = None):
         try:
