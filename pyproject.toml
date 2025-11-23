@@ -1,6 +1,6 @@
 [project]
 name = "utils"
-version = "0.2.0"
+version = "0.3.0"
 description = "General typed utilities"
 readme = "README.md"
 requires-python = ">=3.9"
