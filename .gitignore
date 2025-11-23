@@ -8,3 +8,4 @@ wheels/
 *.py[oc]
 .env
 *.py[oc]
+*.py[oc]

@@ -17,3 +17,4 @@ class UrlErr(Exception): pass
 class LibErr(Exception): pass
 class SysErr(Exception): pass
 class SSHErr(Exception): pass
+class LogErr(Exception): pass
