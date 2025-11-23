@@ -18,3 +18,4 @@ from utils.mods.mod       import mod
 from utils.mods.url       import url
 from utils.mods.sys       import sys
 from utils.mods.ssh       import ssh
+from utils.mods.log       import log
