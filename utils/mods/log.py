@@ -1,6 +1,6 @@
 import inspect
 import logging
-from typed import typed, Maybe, Enum, Str, Nill
+from typed import Maybe, Enum, Str, Nill
 from utils.err import LogErr
 
 LogLevel = Enum(Str, 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG')
@@ -15,10 +15,18 @@ class log:
             self._logger = logging.getLogger(module_name)
             self._logger.setLevel(getattr(logging, str(level)))
 
-            if format:
+            if not self._logger.handlers:
                 handler = logging.StreamHandler()
-                handler.setFormatter(logging.Formatter(format))
+                if format:
+                    handler.setFormatter(logging.Formatter(format))
+                else:
+                    handler.setFormatter(
+                        logging.Formatter(
+                            "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+                        )
+                    )
                 self._logger.addHandler(handler)
+
         except Exception as e:
             raise LogErr(e)
 
