@@ -16,6 +16,10 @@ class thread:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._executor.shutdown(wait=True)
 
+    def __iter__(self):
+       with self._lock:
+           return iter(self._futures.keys())
+
     def new(self, name: Str, task: Function, *args: Tuple, **kwargs: Dict) -> None:
         with self._lock:
             if name in self._futures:
