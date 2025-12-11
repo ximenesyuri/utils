@@ -3,7 +3,6 @@ from typed import typed, convert, TYPE, model, Set, Nat, Regex, Str, Union, Int,
 from utils.mods.helper.cron import _CRON_REGEX, _parse_cron_field
 
 Cron = Regex(_CRON_REGEX)
-Datetime_ = convert(datetime, TYPE)
 
 @model
 class CronModel:
@@ -43,7 +42,7 @@ class cron:
         )
 
     @typed
-    def next_run(expr: Str, last_run: Union(Str, Datetime_, Int, Float)=datetime.now()) -> Datetime_:
+    def next_run(expr: Str, last_run: Union(Str, Int, Float)=datetime.now()) -> datetime:
         if last_run in Str:
             last_run = datetime.fromisoformat(last_run)
         if last_run in Int or last_run in Float:
