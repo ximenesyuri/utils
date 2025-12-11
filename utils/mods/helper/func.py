@@ -4,10 +4,10 @@ import inspect
 import textwrap
 from functools import update_wrapper
 from inspect import signature, Signature, Parameter, _empty, getsource
-from typed import typed, Function, Set, Any, Str, Dict, Bool
+from typed import typed, Function, Set, Str, Dict, Bool, Any
 
 @typed
-def _extract_recursive_deps(func: Function) -> Set(Any):
+def _extract_recursive_deps(func: Function) -> Set:
     src = getsource(func)
     src = textwrap.dedent(src)
     tree = ast.parse(src)
@@ -45,7 +45,7 @@ def _extract_recursive_deps(func: Function) -> Set(Any):
     return referenced
 
 @typed
-def _get_deps(func: Function, extra_search_modules: Bool=True) -> Dict(Any):
+def _get_deps(func: Function, extra_search_modules: Bool=True) -> Dict:
     base = func.__globals__.copy()
     needed = _extract_recursive_deps(func)
     missing = [name for name in needed if name not in base]
@@ -169,7 +169,7 @@ def _copy_func(func: Function, **rename_map: Dict(Str)) -> Function:
     return new_func
 
 @typed
-def _eval_func(func: Function, **fixed_kwargs: Dict(Any)) -> Function:
+def _eval_func(func: Function, **fixed_kwargs: Dict) -> Function:
     sig = signature(func)
     old_params = list(sig.parameters.items())
 

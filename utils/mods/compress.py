@@ -1,7 +1,6 @@
 import os
 import tarfile
 import zipfile
-from utils.mods.cmd import cmd
 from utils.mods.path import path
 from utils.err import CompressErr
 

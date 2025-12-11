@@ -17,9 +17,9 @@ class md:
                     if data is None:
                         return {}
                     return data
-                except yaml.YAMLError as e:
+                except yaml.YAMLError:
                     return {}
-                except Exception as e:
+                except Exception:
                     return {}
             else:
                 return {}
