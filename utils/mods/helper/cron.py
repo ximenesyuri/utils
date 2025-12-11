@@ -1,7 +1,7 @@
 from typed import typed, Str, Nat, Set
 
 @typed
-def _parse_cron_field(field: Str, min_value: Nat, max_value: Nat) -> Set(Nat):
+def _parse_cron_field(field: Str, min_value: Nat, max_value: Nat) -> Set:
     """
     Parse a single cron field (like '*/5', '1,2,3', '1-10/2', '*') into a set of ints.
     """

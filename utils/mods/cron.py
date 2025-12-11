@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
-from typed import typed, model, Set, Nat, Regex
+from typed import typed, convert, TYPE, model, Set, Nat, Regex, Str, Union, Int, Float
 from utils.mods.helper.cron import _CRON_REGEX, _parse_cron_field
 
 Cron = Regex(_CRON_REGEX)
+Datetime_ = convert(datetime, TYPE)
 
 @model
 class CronModel:
@@ -42,13 +43,15 @@ class cron:
         )
 
     @typed
-    def next_run(expr: str, from_dt: datetime=datetime.now()) -> datetime:
-        if from_dt is None:
-            from_dt = datetime.now()
+    def next_run(expr: Str, last_run: Union(Str, Datetime_, Int, Float)=datetime.now()) -> Datetime_:
+        if last_run in Str:
+            last_run = datetime.fromisoformat(last_run)
+        if last_run in Int or last_run in Float:
+            last_run = datetime.fromtimestamp(last_run)
 
         cron_model = cron.parse(expr)
 
-        current = (from_dt.replace(second=0, microsecond=0) + timedelta(minutes=1))
+        current = (last_run.replace(second=0, microsecond=0) + timedelta(minutes=1))
 
         end = current + timedelta(days=366)
 
