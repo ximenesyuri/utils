@@ -159,10 +159,6 @@ class json:
 
     @typed
     def get(entry: Entry='', std: Any={}, json_data: Json={}) -> Any:
-        """
-        Collect an 'entry' from a 'json_data' and return
-        a 'std' value if the 'entry' was not found.
-        """
         try:
             keys = entry.split('.')
             value = json_data
@@ -206,11 +202,13 @@ class json:
             return json_data
 
     @typed
-    def set(entry: Entry='', value: Any=Nill, json_data: Json={}) -> Json:
+    def set(entry: Entry='', value: Any=Nill, json_data: Json={}, unless: Any=Nill) -> Json:
         """
         Set the value at 'entry' (dot-path) in-place, creating any missing objects.
         """
         try:
+            if value is unless or value == unless:
+                return json_data
             keys = entry.split('.')
             current = json_data
             for key in keys[:-1]:
