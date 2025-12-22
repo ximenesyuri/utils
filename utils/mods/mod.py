@@ -2,7 +2,7 @@ import importlib
 import importlib.util
 import sys
 import ast
-from typed import typed, Any, Entry, Str, Bool, Dict, Union, Tuple, convert, TYPE, name, Nill
+from typed import typed, Any, Maybe, List, Entry, Str, Bool, Dict, Union, Tuple, convert, TYPE, name, Nill
 from utils.err import ModErr
 from types import ModuleType
 
@@ -21,14 +21,37 @@ class mod:
             return False
 
     @typed
-    def get(module: Entry) -> Module:
+    def get(obj: Maybe(Union(Str), List(Str)), module: Entry) -> Module:
         """
         Returns the module gect of a given module entry.
         """
         try:
-            return importlib.import_module(module)
-        except:
-            raise ModErr(f"The required module '{module}' does not exists.") from None
+            if mod is None:
+                if obj not in Str:
+                    raise TypeError(
+                        "Single-argument form get(mod) requires 'mod' to be a string"
+                    )
+                mod = obj
+                obj = '.'
+
+            module = importlib.import_module(mod)
+
+            if obj is None or obj == '.':
+                return module
+
+            if obj == '*':
+                names = getattr(module, "__all__", None)
+                if names is None:
+                    names = [name for name in dir(module) if not name.startswith('_')]
+                return {name: getattr(module, name) for name in names}
+
+            if obj in Str:
+                return getattr(module, obj)
+
+            if obj in List(Str):
+                return [getattr(module, name) for name in obj]
+        except Exception as e:
+            raise ModErr(e)
 
     @typed
     def _is_local(obj: Any) -> Bool:
