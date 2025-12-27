@@ -21,7 +21,7 @@ class mod:
             return False
 
     @typed
-    def get(obj: Maybe(Union(Str), List(Str)), module: Entry) -> Any:
+    def get(obj: Maybe(Union(Str), List(Str))=None, module: Maybe(Entry)=None) -> Any:
         try:
             if module is None:
                 if obj not in Str:
