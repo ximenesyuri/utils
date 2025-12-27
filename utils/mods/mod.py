@@ -23,12 +23,12 @@ class mod:
     @typed
     def get(obj: Maybe(Union(Str), List(Str)), module: Entry) -> Any:
         try:
-            if mod is None:
+            if module is None:
                 if obj not in Str:
                     raise TypeError(
-                        "Single-argument form get(mod) requires 'mod' to be a string"
+                        "Single-argument form get(mod) requires 'module' to be a string"
                     )
-                mod = obj
+                module = obj
                 obj = '.'
 
             module = importlib.import_module(mod)
