@@ -31,7 +31,7 @@ class mod:
                 module = obj
                 obj = '.'
 
-            module = importlib.import_module(mod)
+            module = importlib.import_module(module)
 
             if obj is None or obj == '.':
                 return module
