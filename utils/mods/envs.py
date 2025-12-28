@@ -1,8 +1,11 @@
 import os
 import json
-from typed import typed, Maybe, Path, Nill, Env, Dict, Any, Bool, TYPE
+from typed import typed, Maybe, Path, Nill, Regex, Dict, Any, Bool, TYPE
 from utils.mods.path import path
 from utils.err import EnvErr
+
+Env = Regex(r"^[A-Z0-9_]+$")
+Env.__display__ = "Env"
 
 class envs:
     @typed

@@ -1,5 +1,24 @@
-from typed import typed, Json, Any, Str, List, Table
+from typed import typed, Json, Any, Str, List, Table, Bool, Filter
 from utils.err import TableErr
+
+def _is_json_table(data: Any) -> Bool:
+    """
+    Checks if the data is a valid JSON Table structure
+    (list of dicts with same keys).
+    """
+    if not isinstance(data, list):
+        return False
+    if not all(isinstance(item, dict) for item in data):
+        return False
+    if data:
+        first_keys = set(data[0].keys())
+        if not all(set(item.keys()) == first_keys for item in data):
+            return False
+    return True
+
+Table = Filter(Json, typed(_is_json_table))
+Table.__display__ = "Table"
+Table.__null__ = {}
 
 class table:
     @typed

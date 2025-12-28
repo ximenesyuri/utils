@@ -1,4 +1,12 @@
-from typed import typed, HEX, RGB, HSL
+from typed import typed, Prod, Range, Regex
+
+RGB = Prod(Range(0, 255), 3)
+HEX = Regex(r"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
+HSL = Prod(Range(0, 360), Range(0, 100), Range(0, 100))
+
+RGB.__display__ = "RGB"
+HEX.__display__ = "HEX"
+HSL.__display__ = "HSL"
 
 class color:
     @typed
