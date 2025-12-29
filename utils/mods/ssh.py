@@ -1,8 +1,55 @@
 import os
 import subprocess
 import stat
-from typed import typed, Path, Nill, Union, SSHKey
+from typed import typed, TYPE, Str, Path, Nill, Union, SSHKey
 from utils.err import SSHErr
+from utils.mods.helper.ssh import _is_ssh_key
+
+class SSH_KEY(TYPE(Str)):
+    def __call__(cls, *types, private=False):
+        type_tuple = tuple(str(t) for t in types)
+
+        if type_tuple:
+            types_str = ", ".join(type_tuple)
+            class_name = f"SSHKey({types_str}, private={private})"
+        else:
+            class_name = f"SSHKey(private={private})"
+
+        namespace = {
+            "__display__": class_name,
+            "__null__": "",
+            "_ssh_types": type_tuple,
+            "_ssh_private": private,
+        }
+
+        return SSH_KEY(class_name, (Str,), namespace)
+
+    def __instancecheck__(cls, instance):
+        if not isinstance(instance, Str):
+            return False
+
+        private = getattr(cls, "_ssh_private", None)
+        types_ = getattr(cls, "_ssh_types", ())
+
+        if private is None:
+            return (
+                isinstance(instance, SSHKey(private=True)) or
+                isinstance(instance, SSHKey(private=False))
+            )
+
+        if types_:
+            return any(
+                _is_ssh_key(key_string=instance, key_type=t, private=private)
+                for t in types_
+            )
+        return _is_ssh_key(key_string=instance, key_type=None, private=private)
+
+SSHKey = SSH_KEY('SSHKey', (Str,), {
+        "__display__": 'SSHKey',
+        "__null__": "",
+        "_ssh_types": (),
+        "_ssh_private": None
+    })
 
 class ssh:
     class key:
@@ -27,7 +74,3 @@ class ssh:
                 return
             except Exception as e:
                 raise SSHErr(e)
-
-
-
-
