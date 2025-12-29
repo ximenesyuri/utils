@@ -1,10 +1,11 @@
 import os
 import stat
 import shlex
-from typed import typed, TYPE, Str, Tuple, List, Nill, Union, Maybe
+from typed import typed, TYPE, Str, Bool, Tuple, List, Nill, Union, Maybe
 from utils.err import SSHErr
-from utils.mods.path import Path, File
+from utils.mods.path import Path, File, Exists
 from utils.mods.file import file
+from utils.mods.cmd  import cmd as _cmd
 from utils.mods.helper.ssh import _is_ssh_key
 
 class SSH_KEY(TYPE(Str)):
@@ -58,8 +59,6 @@ class ssh:
         @typed
         def prepare(key: Union(Path, SSHKey(private=True))) -> Tuple:
             try:
-                from utils import cmd as _cmd, file
-
                 if key in Path:
                     return key, False
 
@@ -73,8 +72,6 @@ class ssh:
         @typed
         def add(key: Union(Path, SSHKey(private=True))) -> Nill:
             try:
-                from utils import cmd as _cmd
-
                 if "SSH_AUTH_SOCK" not in os.environ:
                     stderr, stdout = _cmd.run("ssh-agent -s")
                     out = stdout or ""
@@ -98,8 +95,6 @@ class ssh:
     @typed
     def exec(host: Str, user: Str, key: Str, cmd: Union(Str, Tuple(Str), List(Str), File), cwd: Maybe(Str)=None) -> Tuple:
         try:
-            from utils import cmd as _cmd
-
             key_path, temp_key = ssh.key.prepare(key)
             try:
                 if not cmd in Union(List, Tuple):
@@ -139,3 +134,53 @@ class ssh:
             if isinstance(e, SSHErr):
                 raise
             raise SSHErr(str(e))
+
+    @typed
+    def rsync(host: Str, user: Str, key: Str, source: Exists, target: Path, delete: Bool=False, pull: Bool=False) -> Nill:
+        try:
+            if not _cmd.exists("rsync"):
+                raise SSHErr("rsync command not found in PATH")
+
+            key_path, temp_key = ssh.key.prepare(key)
+            try:
+                rsync_cmd = ["rsync", "-az"]
+                if delete:
+                    rsync_cmd.append("--delete")
+
+                ssh_part = [
+                    "ssh",
+                    "-i", str(key_path),
+                    "-o", "StrictHostKeyChecking=no",
+                ]
+                rsync_cmd += ["-e", " ".join(shlex.quote(p) for p in ssh_part)]
+
+                if pull:
+                    src = f"{user}@{host}:{source}"
+                    dst = str(target)
+                else:
+                    src = str(source)
+                    dst = f"{user}@{host}:{target}"
+
+                rsync_cmd += [src, dst]
+
+                stderr, stdout = _cmd.run(rsync_cmd)
+
+                if stderr:
+                    raise SSHErr(stderr)
+
+                return
+            finally:
+                if temp_key and key_path and os.path.exists(key_path):
+                    _cmd.rm(key_path)
+        except Exception as e:
+            if isinstance(e, SSHErr):
+                raise
+            raise SSHErr(str(e))
+
+ssh.rsync(
+    host='201.54.9.220',
+    user='ubuntu',
+    key='/home/yx/.ssh/vortice/id_ed25519',
+    source='/home/yx/aaa',
+    target='/home/ubuntu/test'
+)

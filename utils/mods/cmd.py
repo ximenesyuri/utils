@@ -17,6 +17,13 @@ from utils.mods.envs import Env
 
 class cmd:
     @typed
+    def exists(cmd: Str) -> Bool:
+        try:
+            return shutil.which(str(cmd)) is not None
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
     def run(cmd: Union(Str, List, Tuple, File), cwd: Maybe(Path)=None, envs: List(Env)=[], terminate: Bool=True, **kargs: Dict) -> Tuple:
         try:
             if not cmd in Union(List, Tuple):
