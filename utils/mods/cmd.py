@@ -1,6 +1,7 @@
 from pwd import getpwnam
 from grp import getgrnam
 import shutil
+import shlex
 import filecmp
 import tempfile
 import os
@@ -10,20 +11,26 @@ import subprocess
 from pathlib import Path as Path_
 from typed import typed, Str, Union, Maybe, List, Bool, Nill, Any, Pos, Nat, Pattern, Int, Dict, Tuple
 from utils.err import CmdErr
-from utils.mods.path import path, Path, Exists, Dir
+from utils.mods.path import path, Path, File, Exists, Dir
+from utils.mods.file import file
 from utils.mods.envs import Env
 
 class cmd:
     @typed
-    def run(cmd_str: Str, cwd: Path='', envs: List(Env)=[], terminate: Bool=True, **kargs: Any) -> Tuple:
-        """
-        Execute any system command as a subprocess by passing a command str and environment variables.
-        """
+    def run(cmd: Union(Str, List, Tuple, File), cwd: Maybe(Path)=None, envs: List(Env)=[], terminate: Bool=True, **kargs: Dict) -> Tuple:
         try:
-            cmd_list = cmd_str.split()
+            if not cmd in Union(List, Tuple):
+                if cmd in File:
+                    cmd_list = file.read(cmd)
+                else:
+                    cmd_list = shlex.split(str(cmd))
+            else:
+                cmd_list = [str(x) for x in cmd]
+
             env = os.environ.copy()
             if envs:
                 env.update(envs)
+
             if terminate:
                 try:
                     process = subprocess.run(
@@ -50,7 +57,7 @@ class cmd:
                     )
                     for line in process.stdout:
                         print(line, end='')
-                    return_code = process.wait()
+                    process.wait()
                     return None, None
                 except Exception as e:
                     print(f"Error in Popen: {e}", file=sys.stderr)

@@ -1,8 +1,10 @@
 import os
 import stat
-from typed import typed, TYPE, Str, Nill, Union, Tuple
+import shlex
+from typed import typed, TYPE, Str, Tuple, List, Nill, Union, Maybe
 from utils.err import SSHErr
 from utils.mods.path import Path, File
+from utils.mods.file import file
 from utils.mods.helper.ssh import _is_ssh_key
 
 class SSH_KEY(TYPE(Str)):
@@ -56,14 +58,14 @@ class ssh:
         @typed
         def prepare(key: Union(Path, SSHKey(private=True))) -> Tuple:
             try:
-                from utils import cmd, file
+                from utils import cmd as _cmd, file
 
                 if key in Path:
                     return key, False
 
-                tmp_file = cmd.mktemp.file()
+                tmp_file = _cmd.mktemp.file()
                 file.write(tmp_file, key)
-                cmd.chmod(tmp_file, stat.S_IRUSR | stat.S_IWUSR)
+                _cmd.chmod(tmp_file, stat.S_IRUSR | stat.S_IWUSR)
                 return tmp_file, True
             except Exception as e:
                 raise SSHErr(e)
@@ -71,10 +73,10 @@ class ssh:
         @typed
         def add(key: Union(Path, SSHKey(private=True))) -> Nill:
             try:
-                from utils import cmd
+                from utils import cmd as _cmd
 
                 if "SSH_AUTH_SOCK" not in os.environ:
-                    stderr, stdout = cmd.run("ssh-agent -s")
+                    stderr, stdout = _cmd.run("ssh-agent -s")
                     out = stdout or ""
                     for line in out.splitlines():
                         if "SSH_AUTH_SOCK" in line or "SSH_AGENT_PID" in line:
@@ -83,36 +85,56 @@ class ssh:
 
                 key_path, temp_key = ssh.key.prepare(key)
 
-                stderr, stdout = cmd.run(f"ssh-add {key_path}")
+                stderr, stdout = _cmd.run(f"ssh-add {key_path}")
                 if stderr:
                     raise SSHErr(stderr)
 
                 if temp_key:
-                    cmd.rm(key_path)
+                    _cmd.rm(key_path)
                 return
             except Exception as e:
                 raise SSHErr(e)
 
     @typed
-    def exec(host: Str, user: Str, key: Str, command: Str) -> Tuple:
+    def exec(host: Str, user: Str, key: Str, cmd: Union(Str, Tuple(Str), List(Str), File), cwd: Maybe(Str)=None) -> Tuple:
         try:
-            from utils import cmd
+            from utils import cmd as _cmd
+
             key_path, temp_key = ssh.key.prepare(key)
             try:
-                ssh_cmd = (
-                    f"ssh -i {key_path} "
-                    f"-o StrictHostKeyChecking=no "
-                    f"{user}@{host} {command}"
-                )
-                stderr, stdout = cmd.run(ssh_cmd)
+                if not cmd in Union(List, Tuple):
+                    if cmd in File:
+                        remote_cmd = file.read(cmd)
+                    else:
+                        remote_cmd = str(cmd)
+                else:
+                    remote_cmd = " ".join(shlex.quote(str(p)) for p in cmd)
+
+                if cwd:
+                    if "\n" in remote_cmd:
+                        remote_cmd = (
+                            f"cd {shlex.quote(str(cwd))} && (\n{remote_cmd}\n)"
+                        )
+                    else:
+                        remote_cmd = f"cd {shlex.quote(str(cwd))} && {remote_cmd}"
+
+                ssh_cmd = [
+                    "ssh",
+                    "-i", str(key_path),
+                    "-o", "StrictHostKeyChecking=no",
+                    f"{user}@{host}",
+                    remote_cmd,
+                ]
+
+                stderr, stdout = _cmd.run(ssh_cmd)
 
                 if stderr:
                     raise SSHErr(stderr)
 
                 return stdout, stderr
             finally:
-                if temp_key and key_path and key_path in File:
-                    cmd.rm(key_path)
+                if temp_key and key_path and os.path.exists(key_path):
+                    _cmd.rm(key_path)
         except Exception as e:
             if isinstance(e, SSHErr):
                 raise
