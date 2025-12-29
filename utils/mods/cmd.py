@@ -11,21 +11,19 @@ from typed import (
     Str,
     List,
     Bool,
-    Path,
     Nill,
     Any,
     Dir,
-    Env,
     Pos,
     Nat,
-    Exists,
     Pattern,
     Int,
     Dict,
     Tuple
 )
 from utils.err import CmdErr
-from utils.mods.path import path
+from utils.mods.path import path, Path, Exists
+from utils.mods.envs import Env
 
 class cmd:
     @typed
