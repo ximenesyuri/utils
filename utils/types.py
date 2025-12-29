@@ -7,4 +7,4 @@ from utils.mods.table import Table
 from utils.mods.path  import Path, File, Exists, Dir, Mount, Symlink
 from utils.mods.url   import Url, Hostname
 from utils.mods.ip    import IPv4, IPv6
-from utils.mods.helper.types import Char, Email, Extension
+from utils.mods.helper.types import Char, Email, Extension, PathUrl
