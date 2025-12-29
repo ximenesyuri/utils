@@ -1,8 +1,8 @@
 import os
-import subprocess
 import stat
-from typed import typed, TYPE, Str, Path, Nill, Union, SSHKey
+from typed import typed, TYPE, Str, Nill, Union, Tuple
 from utils.err import SSHErr
+from utils.mods.path import Path, File
 from utils.mods.helper.ssh import _is_ssh_key
 
 class SSH_KEY(TYPE(Str)):
@@ -25,7 +25,7 @@ class SSH_KEY(TYPE(Str)):
         return SSH_KEY(class_name, (Str,), namespace)
 
     def __instancecheck__(cls, instance):
-        if not isinstance(instance, Str):
+        if not instance in Str:
             return False
 
         private = getattr(cls, "_ssh_private", None)
@@ -33,8 +33,8 @@ class SSH_KEY(TYPE(Str)):
 
         if private is None:
             return (
-                isinstance(instance, SSHKey(private=True)) or
-                isinstance(instance, SSHKey(private=False))
+                instance in SSHKey(private=True) or
+                instance in SSHKey(private=False)
             )
 
         if types_:
@@ -54,23 +54,66 @@ SSHKey = SSH_KEY('SSHKey', (Str,), {
 class ssh:
     class key:
         @typed
-        def add(key: Union(Path, SSHKey(private=True))) -> Nill:
+        def prepare(key: Union(Path, SSHKey(private=True))) -> Tuple:
             try:
-                if "SSH_AUTH_SOCK" not in os.environ:
-                    out = subprocess.check_output(["ssh-agent", "-s"], text=True)
-                    for line in out.splitlines():
-                        if "SSH_AUTH_SOCK" in line or "SSH_AGENT_PID" in line:
-                            k, v = line.split(";", 1)[0].split("=", 1)
-                            os.environ[k] = v
-                if key in Path:
-                    subprocess.check_call(["ssh-add", key])
-                    return
                 from utils import cmd, file
+
+                if key in Path:
+                    return key, False
+
                 tmp_file = cmd.mktemp.file()
                 file.write(tmp_file, key)
-                os.chmod(tmp_file, stat.S_IRUSR | stat.S_IWUSR)
-                subprocess.check_call(["ssh-add", tmp_file])
-                cmd.rm(tmp_file)
+                cmd.chmod(tmp_file, stat.S_IRUSR | stat.S_IWUSR)
+                return tmp_file, True
+            except Exception as e:
+                raise SSHErr(e)
+
+        @typed
+        def add(key: Union(Path, SSHKey(private=True))) -> Nill:
+            try:
+                from utils import cmd
+
+                if "SSH_AUTH_SOCK" not in os.environ:
+                    stderr, stdout = cmd.run("ssh-agent -s")
+                    out = stdout or ""
+                    for line in out.splitlines():
+                        if "SSH_AUTH_SOCK" in line or "SSH_AGENT_PID" in line:
+                            k, v = line.split(";", 3)[0].split("=", 1)
+                            os.environ[k] = v
+
+                key_path, temp_key = ssh.key.prepare(key)
+
+                stderr, stdout = cmd.run(f"ssh-add {key_path}")
+                if stderr:
+                    raise SSHErr(stderr)
+
+                if temp_key:
+                    cmd.rm(key_path)
                 return
             except Exception as e:
                 raise SSHErr(e)
+
+    @typed
+    def exec(host: Str, user: Str, key: Str, command: Str) -> Tuple:
+        try:
+            from utils import cmd
+            key_path, temp_key = ssh.key.prepare(key)
+            try:
+                ssh_cmd = (
+                    f"ssh -i {key_path} "
+                    f"-o StrictHostKeyChecking=no "
+                    f"{user}@{host} {command}"
+                )
+                stderr, stdout = cmd.run(ssh_cmd)
+
+                if stderr:
+                    raise SSHErr(stderr)
+
+                return stdout, stderr
+            finally:
+                if temp_key and key_path and key_path in File:
+                    cmd.rm(key_path)
+        except Exception as e:
+            if isinstance(e, SSHErr):
+                raise
+            raise SSHErr(str(e))

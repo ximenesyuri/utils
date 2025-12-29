@@ -1,3 +1,5 @@
+from pwd import getpwnam
+from grp import getgrnam
 import shutil
 import filecmp
 import tempfile
@@ -6,23 +8,9 @@ import sys
 import time
 import subprocess
 from pathlib import Path as Path_
-from typed import (
-    typed,
-    Str,
-    List,
-    Bool,
-    Nill,
-    Any,
-    Dir,
-    Pos,
-    Nat,
-    Pattern,
-    Int,
-    Dict,
-    Tuple
-)
+from typed import typed, Str, Union, Maybe, List, Bool, Nill, Any, Pos, Nat, Pattern, Int, Dict, Tuple
 from utils.err import CmdErr
-from utils.mods.path import path, Path, Exists
+from utils.mods.path import path, Path, Exists, Dir
 from utils.mods.envs import Env
 
 class cmd:
@@ -230,6 +218,61 @@ class cmd:
                     shutil.copytree(src, dest)
                 return
             raise ValueError(f"Unsupported source type: {src}")
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
+    def chmod(path: Exists, mode: Int) -> Nill:
+        try:
+            os.chmod(path, mode)
+            if path in Dir:
+                for root, dirs, files in os.walk(path):
+                    for d in dirs:
+                        dir_path = os.path.join(root, d)
+                        os.chmod(dir_path, mode)
+                    for f in files:
+                        file_path = os.path.join(root, f)
+                        os.chmod(file_path, mode)
+        except Exception as e:
+            raise CmdErr(e)
+
+    @typed
+    def chown(path: Exists, user: Maybe(Union(Int, Str))=None, group: Maybe(Union(Int, Str))=None) -> Nill:
+        try:
+            uid = -1
+            gid = -1
+            if user is not None:
+                if user in Str:
+                    try:
+                        uid = getpwnam(user).pw_uid
+                    except KeyError:
+                        raise ValueError(f"User '{user}' not found.")
+                elif user in Int:
+                    uid = user
+                else:
+                    raise TypeError("User must be a string (username) or an int (UID).")
+
+            if group is not None:
+                if group in Str:
+                    try:
+                        gid = getgrnam(group).gr_gid
+                    except KeyError:
+                        raise ValueError(f"Group '{group}' not found.")
+                elif group in Int:
+                    gid = group
+                else:
+                    raise TypeError("Group must be a string (group name) or an int (GID).")
+
+            os.chown(path, uid, gid)
+
+            if path in Dir:
+                for root, dirs, files in os.walk(path):
+                    for d in dirs:
+                        dir_path = os.path.join(root, d)
+                        os.chown(dir_path, uid, gid)
+                    for f in files:
+                        file_path = os.path.join(root, f)
+                        os.chown(file_path, uid, gid)
         except Exception as e:
             raise CmdErr(e)
 

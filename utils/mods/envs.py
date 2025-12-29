@@ -62,7 +62,7 @@ class envs:
                 os.environ[key] = value
 
     @typed
-    def get_all(envpath: Maybe(Path)=None) -> Dict(Any):
+    def all(envpath: Maybe(Path)=None) -> Dict:
         if not envpath:
             envpath = envs.dotenv()
             if not envpath:
@@ -82,6 +82,13 @@ class envs:
                 value = line[equals_index + 1:].strip()
                 envs_.update({key: value})
             return envs_
+
+    @typed
+    def environ() -> Dict:
+        try:
+            return os.environ
+        except Exception as e:
+            raise EnvErr(e)
 
     @typed
     def print(envpath: Maybe(Path)=None) -> Nill:
