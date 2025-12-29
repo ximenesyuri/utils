@@ -1,7 +1,7 @@
 import json as json_
-from utils.mods.path  import path
+from typed import typed, Bool, Nat, Nill, Any, Int, Float, name, TYPE, Str, Dict, Set, List, Union, Regex, Filter
+from utils.mods.path  import path, Path
 from utils.err import JsonErr, PathErr
-from typed import typed, Bool, Path, Nat, Nill, Any, Int, Float, name, TYPE, Str, Dict, Set, List, Union, Regex, Filter
 
 Json = Union(Dict(Any), Set(Any), List(Any))
 Entry = Regex(r'^[a-zA-Z0-9_.]+$')
@@ -27,7 +27,6 @@ Flat.__display__  = "Flat"
 Json.__null__  = {}
 Entry.__null__ = None
 Flat.__null__  = {}
-
 
 class json:
     @typed
