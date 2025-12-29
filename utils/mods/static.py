@@ -1,6 +1,7 @@
-from typed  import typed, Bool, Path, Nill
+from typed  import typed, Bool, Nill
 from utils.mods.file import file
 from utils.mods.lib  import lib
+from utils.mods.path import Path
 from utils.err import StaticErr
 
 class static:

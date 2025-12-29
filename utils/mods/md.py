@@ -1,4 +1,5 @@
-from typed import typed, Str, Json
+from typed import typed, Str
+from utils.mods.json_ import Json
 
 class md:
     @typed

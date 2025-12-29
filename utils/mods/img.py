@@ -1,6 +1,8 @@
 import os
-from typed import typed, Path, Nill, Maybe, Url, File
+from typed import typed, Nill, Maybe
 from utils.mods.lib import lib
+from utils.mods.path import Path, File
+from utils.mods.url import Url
 from utils.err import ImgErr
 
 class img:
