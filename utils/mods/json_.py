@@ -4,7 +4,7 @@ from utils.mods.path  import path, Path
 from utils.err import JsonErr, PathErr
 
 Json = Union(Dict(Any), Set(Any), List(Any))
-Entry = Regex(r'^[a-zA-Z0-9_.]+$')
+Entry = Regex(r'^[a-zA-Z0-9_-.]+$')
 
 def _is_json_flat(data: Json) -> Bool:
     """
