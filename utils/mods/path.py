@@ -2,8 +2,45 @@ import os
 import re
 import sys
 import inspect
-from typed import Bool, Path, Union, Tuple, Int, Str, typed, Nill, Dir, File, List, Pattern
+from typed import Bool, Union, Regex, Filter, Null, Condition, Tuple, Int, Str, typed, Nill, List, Pattern
 from utils.err import PathErr
+
+Path = Union(Regex(r"^/?(?:(?:[^/:\r\n*?\"<>|\\]+/)*[^/:\r\n*?\"<>|\\]+/?|/?)$"), Null(Str))
+
+def _exists(path: Path) -> Bool:
+    return os.path.exists(path)
+
+def _is_file(path: Path) -> Bool:
+    return os.path.isfile(path)
+
+def _is_dir(path: Path) -> Bool:
+    return os.path.isdir(path)
+
+def _is_symlink(path: Path) -> Bool:
+    return os.path.islink(path)
+
+def _is_mount(path: Path) -> Bool:
+    return os.path.ismount(path)
+
+Exists  = Filter(Path, Condition(_exists))
+File    = Filter(Path, Condition(_is_file))
+Dir     = Filter(Path, Condition(_is_dir))
+Symlink = Filter(Path, Condition(_is_symlink))
+Mount   = Filter(Path, Condition(_is_mount))
+
+Path.__display__    = "Path"
+Exists.__display__  = "Exists"
+File.__display__    = "File"
+Dir.__display__     = "Dir"
+Symlink.__display__ = "Symlink"
+Mount.__display__   = "Mount"
+
+Path.__null__    = ""
+Exists.__null__  = ""
+File.__null__    = ""
+Dir.__null__     = ""
+Symlink.__null__ = ""
+Mount.__null__   = ""
 
 class path:
     @typed
@@ -31,7 +68,7 @@ class path:
     @typed
     def exists(*paths: Tuple(Path)) -> Bool:
         try:
-            return all(os.path.exists(path_) for path_ in paths)
+            return all(path in Exists for path in paths)
         except Exception as e:
             raise PathErr(e)
 
@@ -55,14 +92,14 @@ class path:
     @typed
     def is_file(*paths: Tuple(Path)) -> Bool:
         try:
-            return all(os.path.isfile(path_) for path_ in paths)
+            return all(path in File for path in paths)
         except Exception as e:
             raise PathErr(e)
 
     @typed
     def is_dir(*paths: Tuple(Path)) -> Bool:
         try:
-            return all(os.path.isdir(path_) for path_ in paths)
+            return all(path in Dir for path in paths)
         except Exception as e:
             raise PathErr(e)
 
@@ -83,7 +120,14 @@ class path:
     @typed
     def is_link(*paths: Tuple(Path)) -> Bool:
         try:
-            return not any(os.path.islink(path_) for path_ in paths)
+            return all(path in Symlink for path in paths)
+        except Exception as e:
+            raise PathErr(e)
+
+    @typed
+    def is_mount(*paths: Tuple(Path)) -> Bool:
+        try:
+            return all(path in Mount for path in paths)
         except Exception as e:
             raise PathErr(e)
 

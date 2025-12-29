@@ -1,5 +1,6 @@
 import os
-from typed import typed, Path
+from typed import typed
+from utils.mods.path import Path
 from utils.err import SysErr
 
 class sys:

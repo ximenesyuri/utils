@@ -1,4 +1,5 @@
-from typed import typed, Path, Str, Nill, List, File
+from typed import typed, Str, Nill, List
+from utils.mods.path import Path, File
 from utils.err import FileErr
 
 class file:

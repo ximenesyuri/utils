@@ -28,12 +28,6 @@ class thread:
             self._futures[name] = future
 
     def restart(self, name: Str, task: Function, *args: Tuple, **kwargs: Dict) -> None:
-        """
-        Restart a task at the same position in the internal order:
-        - The key `name` must already exist.
-        - Its current Future must be done().
-        - A new Future is submitted and stored under the same key.
-        """
         with self._lock:
             future = self._futures.get(name)
             if future is None:
@@ -46,9 +40,6 @@ class thread:
             self._futures[name] = new_future
 
     def rm(self, name: Str) -> None:
-        """
-        Remove a task from this thread. If it is still running, attempt to cancel it.
-        """
         with self._lock:
             future = self._futures.pop(name, None)
         if future is None:
