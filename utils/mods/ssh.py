@@ -176,11 +176,3 @@ class ssh:
             if isinstance(e, SSHErr):
                 raise
             raise SSHErr(str(e))
-
-ssh.rsync(
-    host='201.54.9.220',
-    user='ubuntu',
-    key='/home/yx/.ssh/vortice/id_ed25519',
-    source='/home/yx/aaa',
-    target='/home/ubuntu/test'
-)
