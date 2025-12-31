@@ -1,16 +1,13 @@
 import json as json_
-from typed import typed, Bool, Nat, Nill, Any, Int, Float, name, TYPE, Str, Dict, Set, List, Union, Regex, Filter
+from typed import typed, Bool, Nill, Any, Int, Float, name, TYPE, Str, Dict, Set, List, Union, Regex, Filter
 from utils.mods.path  import path, Path
+from utils.mods.number import Nat
 from utils.err import JsonErr, PathErr
 
-Json = Union(Dict(Any), Set(Any), List(Any))
+Json = Union(Dict, Set, List)
 Entry = Regex(r'^[a-zA-Z0-9_.-]+$')
 
 def _is_json_flat(data: Json) -> Bool:
-    """
-    Checks if the data represents a 'flat' JSON structure,
-    where values are primitive types or None.
-    """
     if not isinstance(data, dict):
         return False
     for key in data.keys():
@@ -18,7 +15,7 @@ def _is_json_flat(data: Json) -> Bool:
             return False
     return True
 
-Flat  = Filter(Dict(Str, Any), typed(_is_json_flat))
+Flat  = Filter(Dict, _is_json_flat)
 
 Json.__display__  = "Json"
 Entry.__display__ = "Entry"

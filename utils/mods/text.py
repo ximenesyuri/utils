@@ -1,18 +1,7 @@
 import unicodedata
 import re
-from typed import (
-    typed,
-    List,
-    Nat,
-    Str,
-    Tuple,
-    Union,
-    Dict,
-    Pattern,
-    Int,
-    Bool,
-    Nill
-)
+from typed import typed, List, Str, Tuple, Union, Dict, Pattern, Int, Bool, Nill
+from utils.mods.number import Nat
 
 class text:
     @typed

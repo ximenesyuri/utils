@@ -3,10 +3,6 @@ from utils.mods.json_ import json, Json
 from utils.err import TableErr
 
 def _is_json_table(data: Any) -> Bool:
-    """
-    Checks if the data is a valid JSON Table structure
-    (list of dicts with same keys).
-    """
     if not isinstance(data, list):
         return False
     if not all(isinstance(item, dict) for item in data):
@@ -17,7 +13,7 @@ def _is_json_table(data: Any) -> Bool:
             return False
     return True
 
-Table = Filter(Json, typed(_is_json_table))
+Table = Filter(Json, _is_json_table)
 Table.__display__ = "Table"
 Table.__null__ = {}
 

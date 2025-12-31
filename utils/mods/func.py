@@ -1,6 +1,6 @@
 from functools import wraps
 from inspect import signature, Signature, Parameter, getsource
-from typed import typed, TYPE, Function, Tuple, Str, Dict, convert, Any, null
+from typed import typed, TYPE, Function, Tuple, Str, Dict, convert, Any
 from utils.mods.helper.func import _get_deps, _copy_func, _eval_func, _find_in_stack
 from utils.err import FuncErr
 
@@ -112,4 +112,4 @@ class func:
         try:
             return _eval_func(f, **fixed_vars)
         except Exception as e:
-            raise FuncErr(e) 
+            raise FuncErr(e)
