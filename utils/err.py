@@ -19,3 +19,4 @@ class SysErr(Exception): pass
 class SSHErr(Exception): pass
 class LogErr(Exception): pass
 class CronErr(Exception): pass
+class HTTPErr(Exception): pass
