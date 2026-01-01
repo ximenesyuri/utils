@@ -2,7 +2,8 @@ import os
 import re
 import sys
 import inspect
-from typed import Bool, Union, Regex, Filter, Null, Condition, Tuple, Int, Str, typed, Nill, List, Pattern
+from typed import Bool, Union, Regex, Filter, Null, Tuple, Int, Str, typed, Nill, List, Pattern
+from typed.types import Condition
 from utils.err import PathErr
 
 Path = Union(Regex(r"^/?(?:(?:[^/:\r\n*?\"<>|\\]+/)*[^/:\r\n*?\"<>|\\]+/?|/?)$"), Null(Str))

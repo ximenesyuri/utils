@@ -75,29 +75,29 @@ def __dir__():
     return sorted(set(globals().keys()) | set(__all__))
 
 if __lsp__:
-    from utils.mods.cmd       import cmd       as cmd
-    from utils.mods.json_     import json      as json
-    from utils.mods.table     import table     as table
-    from utils.mods.color     import color     as color
-    from utils.mods.datetime_ import datetime  as datetime
-    from utils.mods.envs      import envs      as envs
-    from utils.mods.path      import path      as path
-    from utils.mods.file      import file      as file
-    from utils.mods.img       import img       as img
-    from utils.mods.compress  import compress  as compress
-    from utils.mods.yml       import yml       as yml
-    from utils.mods.static    import static    as static
-    from utils.mods.lib       import lib       as lib
-    from utils.mods.md        import md        as md
-    from utils.mods.func      import func      as func
-    from utils.mods.text      import text      as text
-    from utils.mods.mod       import mod       as mod
-    from utils.mods.url       import url       as url
-    from utils.mods.sys       import sys       as sys
-    from utils.mods.ssh       import ssh       as ssh
-    from utils.mods.log       import log       as log
-    from utils.mods.thread    import thread    as thread
-    from utils.mods.cron      import cron      as cron
-    from utils.mods.http      import http      as http
+    from utils.mods.cmd       import cmd
+    from utils.mods.json_     import json
+    from utils.mods.table     import table
+    from utils.mods.color     import color
+    from utils.mods.datetime_ import datetime
+    from utils.mods.envs      import envs
+    from utils.mods.path      import path
+    from utils.mods.file      import file
+    from utils.mods.img       import img
+    from utils.mods.compress  import compress
+    from utils.mods.yml       import yml
+    from utils.mods.static    import static
+    from utils.mods.lib       import lib
+    from utils.mods.md        import md
+    from utils.mods.func      import func
+    from utils.mods.text      import text
+    from utils.mods.mod       import mod
+    from utils.mods.url       import url
+    from utils.mods.sys       import sys
+    from utils.mods.ssh       import ssh
+    from utils.mods.log       import log
+    from utils.mods.thread    import thread
+    from utils.mods.cron      import cron
+    from utils.mods.http      import http
     dt = datetime
 
