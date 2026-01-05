@@ -4,6 +4,8 @@ import sysconfig
 import subprocess
 from typed import typed, Str, Tuple, Maybe, Bool, Nill
 
+class LibErr(Exception): pass
+
 class lib:
     @typed
     def is_installed(lib: Str, version: Maybe(Str) = None) -> Bool:

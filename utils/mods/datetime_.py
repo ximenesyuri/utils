@@ -30,7 +30,6 @@ TimeZone = TIMEZONE("TimeZone", (Str,), {"__display__": "TimeZone", "__null__": 
 @cache
 def Date(date_format):
     from typed.mods.types.base import TYPE, Str
-    from typed.mods.types.extra import DateFormat
     if not isinstance(date_format, DateFormat):
         raise TypeError(
             "Date is not in valid format:"
@@ -59,7 +58,6 @@ def Date(date_format):
 @cache
 def Time(time_format):
     from typed.mods.types.base import TYPE, Str
-    from typed.mods.types.extra import TimeFormat
     if not isinstance(time_format, TimeFormat):
         raise TypeError(
             "Time is not in valid format:"
@@ -91,7 +89,6 @@ def Time(time_format):
 @cache
 def Datetime(datetime_format):
     from typed.mods.types.base import TYPE, Str
-    from typed.mods.types.extra import DatetimeFormat
     if not isinstance(datetime_format, DatetimeFormat):
         raise TypeError(
             "Datetime is not in valid format:"
@@ -120,6 +117,8 @@ def Datetime(datetime_format):
         "__display__": class_name,
         "__null__": "",
     })
+
+class DatetimeErr(Exception): pass
 
 class datetime:
     @typed

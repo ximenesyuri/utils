@@ -53,7 +53,7 @@ __lazy__ = {
     "log":       ("utils.mods.log",       "log"),
     "thread":    ("utils.mods.thread",    "thread"),
     "cron":      ("utils.mods.cron",      "cron"),
-    "http":      ("utils.mods.http",      "http"),
+    "http":      ("utils.mods.http_",      "http"),
     # alias: dt = datetime
     "dt":        ("utils.mods.datetime_", "datetime"),
 }
@@ -98,6 +98,6 @@ if __lsp__:
     from utils.mods.log       import log
     from utils.mods.thread    import thread
     from utils.mods.cron      import cron
-    from utils.mods.http      import http
+    from utils.mods.http_     import http
     dt = datetime
 

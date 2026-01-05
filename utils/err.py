@@ -1,22 +1,34 @@
-class CmdErr(Exception): pass
-class CompressErr(Exception): pass
-class ColorErr(Exception): pass
-class DatetimeErr(Exception): pass
-class EnvErr(Exception): pass
-class FileErr(Exception): pass
-class ImgErr(Exception): pass
-class JsonErr(Exception): pass
-class TableErr(Exception): pass
-class MDErr(Exception): pass
-class PathErr(Exception): pass
-class YMLErr(Exception): pass
-class StaticErr(Exception): pass
-class FuncErr(Exception): pass
-class ModErr(Exception): pass
-class UrlErr(Exception): pass
-class LibErr(Exception): pass
-class SysErr(Exception): pass
-class SSHErr(Exception): pass
-class LogErr(Exception): pass
-class CronErr(Exception): pass
-class HTTPErr(Exception): pass
+from importlib import import_module as __import__
+from typing import TYPE_CHECKING as __lsp__
+
+__all__ = [
+    'NotExists',
+    'AlreadyExists',
+    'AlreadSet',
+    'NotMatch'
+]
+
+__lazy__ = {
+    "NotExists":      ("utils.mods.err", "NotExists"),
+    "AlreadyExists":  ("utils.mods.err", "AlreadyExists"),
+    "AlreadSet":      ("utils.mods.err", "AlreadySet"),
+    "NotMatch":       ("utils.mods.err", "NotMatch")
+}
+
+def __getattr__(name):
+    try:
+        module_name, attr_name = __lazy__[name]
+    except KeyError:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
+
+    module = __import__(module_name)
+    attr = getattr(module, attr_name)
+    globals()[name] = attr
+    return attr
+
+
+def __dir__():
+    return sorted(set(globals().keys()) | set(__all__))
+
+if __lazy__:
+    from utils.mods.err import AlreadyExists, AlreadySet, NotExists, NotMatch

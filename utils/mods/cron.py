@@ -13,6 +13,8 @@ class CronModel:
     months: Set(Nat)
     days_of_week: Set(Nat)
 
+class CronErr(Exception): pass
+
 class cron:
     @typed
     def parse(cron: Cron) -> CronModel:

@@ -1,7 +1,8 @@
 import re
 from typed import typed, Any, TYPE, Dict, Regex, List, Str, Maybe
 from urllib.parse import urlparse, parse_qs
-from utils.err import UrlErr
+
+class UrlErr(Exception): pass
 
 class URL(TYPE(Str)):
     def __call__(cls, *schemes, pattern=None):

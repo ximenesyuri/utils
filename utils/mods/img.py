@@ -3,7 +3,8 @@ from typed import typed, Nill, Maybe
 from utils.mods.lib import lib
 from utils.mods.path import Path, File
 from utils.mods.url import Url
-from utils.err import ImgErr
+
+class ImgErr(Exception): pass
 
 class img:
     @typed

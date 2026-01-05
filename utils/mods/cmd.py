@@ -10,11 +10,12 @@ import time
 import subprocess
 from pathlib import Path as Path_
 from typed import typed, Str, Union, Maybe, List, Bool, Nill, Any, Pattern, Int, Dict, Tuple
-from utils.err import CmdErr
 from utils.mods.path import path, Path, File, Exists, Dir
 from utils.mods.file import file
 from utils.mods.envs import Env
 from utils.mods.number import Pos, Nat
+
+class CmdErr(Exception): pass
 
 class cmd:
     @typed

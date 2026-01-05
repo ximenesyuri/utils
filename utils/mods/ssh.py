@@ -2,7 +2,6 @@ import os
 import stat
 import shlex
 from typed import typed, TYPE, Str, Bool, Tuple, List, Nill, Union, Maybe
-from utils.err import SSHErr
 from utils.mods.path import Path, File, Exists
 from utils.mods.file import file
 from utils.mods.cmd  import cmd as _cmd
@@ -53,6 +52,8 @@ SSHKey = SSH_KEY('SSHKey', (Str,), {
         "_ssh_types": (),
         "_ssh_private": None
     })
+
+class SSHErr(Exception): pass
 
 class ssh:
     class key:

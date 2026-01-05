@@ -4,7 +4,6 @@ import sys
 import inspect
 from typed import Bool, Union, Regex, Filter, Null, Tuple, Int, Str, typed, Nill, List, Pattern
 from typed.types import Condition
-from utils.err import PathErr
 
 Path = Union(Regex(r"^/?(?:(?:[^/:\r\n*?\"<>|\\]+/)*[^/:\r\n*?\"<>|\\]+/?|/?)$"), Null(Str))
 
@@ -42,6 +41,8 @@ File.__null__    = ""
 Dir.__null__     = ""
 Symlink.__null__ = ""
 Mount.__null__   = ""
+
+class PathErr(Exception): pass
 
 class path:
     @typed

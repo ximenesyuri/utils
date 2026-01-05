@@ -1,6 +1,5 @@
 from typed import typed, Any, Str, List, Bool, Filter
 from utils.mods.json_ import json, Json
-from utils.err import TableErr
 
 def _is_json_table(data: Any) -> Bool:
     if not isinstance(data, list):
@@ -16,6 +15,8 @@ def _is_json_table(data: Any) -> Bool:
 Table = Filter(Json, _is_json_table)
 Table.__display__ = "Table"
 Table.__null__ = {}
+
+class TableErr(Exception): pass
 
 class table:
     @typed

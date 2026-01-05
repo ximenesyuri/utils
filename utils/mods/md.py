@@ -1,6 +1,8 @@
 from typed import typed, Str
 from utils.mods.json_ import Json
 
+class MDErr(Exception): pass
+
 class md:
     @typed
     def get_frontmatter(markdown: Str) -> Json:

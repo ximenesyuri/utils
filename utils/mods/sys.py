@@ -1,7 +1,8 @@
 import os
 from typed import typed
 from utils.mods.path import Path
-from utils.err import SysErr
+
+class SysErr(Exception): pass
 
 class sys:
     @typed

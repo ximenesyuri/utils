@@ -2,7 +2,8 @@ import os
 import tarfile
 import zipfile
 from utils.mods.path import path
-from utils.err import CompressErr
+
+class CompressErr(Exception): pass
 
 class compress:
     def compress(input_path, output_path):

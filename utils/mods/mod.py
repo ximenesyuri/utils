@@ -3,11 +3,12 @@ import importlib.util
 import sys
 import ast
 from typed import typed, Any, Maybe, List, Str, Bool, Dict, Union, convert, TYPE, name, Nill
-from utils.err import ModErr
 from utils.mods.json_ import Entry
 from types import ModuleType
 
 Module = convert(ModuleType, TYPE)
+
+class ModErr(Exception): pass
 
 class mod:
     @typed

@@ -1,9 +1,10 @@
 import inspect
 import logging
 from typed import Maybe, Enum, Str, Nill
-from utils.err import LogErr
 
 LogLevel = Enum(Str, 'CRITICAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG')
+
+class LogErr(Exception): pass
 
 class log:
     def __init__(self, level: LogLevel = 'DEBUG', format: Maybe(Str) = None):

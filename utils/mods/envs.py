@@ -2,10 +2,11 @@ import os
 import json
 from typed import typed, Maybe, Nill, Regex, Dict, Any, Bool, TYPE
 from utils.mods.path import path, Path
-from utils.err import EnvErr
 
 Env = Regex(r"^[A-Z0-9_]+$")
 Env.__display__ = "Env"
+
+class EnvErr(Exception): pass
 
 class envs:
     @typed

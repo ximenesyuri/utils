@@ -8,6 +8,8 @@ RGB.__display__ = "RGB"
 HEX.__display__ = "HEX"
 HSL.__display__ = "HSL"
 
+class ColorErr(Exception): pass
+
 class color:
     @typed
     def rgb_to_hex(rgb: RGB) -> HEX:
