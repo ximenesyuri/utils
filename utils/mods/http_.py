@@ -201,6 +201,3 @@ class http:
             )
         except Exception as e:
             raise HTTPErr(e)
-
-
-print(http.get('https://services.vortice.digital/sync/v1/content/contexts').__json__)

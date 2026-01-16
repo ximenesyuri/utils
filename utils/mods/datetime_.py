@@ -9,7 +9,6 @@ from utils.mods.helper.datetime import (
     _TIME_DIRECTIVES,
     _DATETIME_DIRECTIVES
 )
-from utils.err import DatetimeErr
 
 DatetimeFormat = Regex(f"^{_ALLOWED_CHARS}({_DATETIME_DIRECTIVES}{_ALLOWED_CHARS})+$")
 DateFormat = Regex(f"^{_ALLOWED_CHARS}({_DATE_DIRECTIVES}{_ALLOWED_CHARS})+$")
