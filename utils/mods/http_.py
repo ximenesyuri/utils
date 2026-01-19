@@ -39,7 +39,7 @@ class http:
         headers: Maybe(Union(Header, Dict)) = None,
         follow:  Bool = True,
         timeout: Num = 11,
-        params:  Maybe(Params) = None,
+        params:  Maybe(Params)=None,
     ) -> Response:
 
         url = _apply_params(url, params)
