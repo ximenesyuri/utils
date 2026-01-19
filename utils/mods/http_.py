@@ -74,11 +74,13 @@ class http:
                 resp_headers = dict(resp.headers.items())
                 raw_data = resp.read()
                 final_url = resp.geturl()
+                message = resp.msg
         except _HTTPError as e:
             code = e.code
             resp_headers = dict(e.headers.items()) if e.headers else {}
             raw_data = e.read()
             final_url = e.geturl()
+            message = e.msg
 
         parsed_data = _parse_content(resp_headers, raw_data)
 
@@ -90,6 +92,7 @@ class http:
             code=code,
             url=final_url,
             data=parsed_data,
+            message=message
         )
 
     @typed
