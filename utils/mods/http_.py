@@ -15,7 +15,8 @@ class Response:
     headers: Dict
     code: Int
     url: Url('http', 'https')
-    data: Union(Str, List, Dict)
+    data: Maybe(Union(Str, List, Dict))=None
+    message: Maybe(Str)=None
 
 class HTTPErr(Exception): pass
 
@@ -29,7 +30,7 @@ class http:
             params=Params(q="test"),
             headers=Header(token="abc", type="json"),
         )
-        print(resp.code, resp.headers, resp.data, resp.status)
+        print(resp.code, resp.headers, resp.data, resp.status, resp.message)
     """
 
     def request(
