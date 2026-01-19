@@ -11,9 +11,8 @@ class Header:
     type: ContentTypes = "json"
     extra: Maybe(Dict) = None
 
-class Params(dict):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+def Params(**kwargs):
+    return dict(**kwargs)
 
 def _get_encoding(headers):
     ctype = headers.get("Content-Type", "").lower()

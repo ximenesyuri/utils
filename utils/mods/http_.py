@@ -37,11 +37,11 @@ class http:
     def request(
         method:  Str,
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes)) = None,
-        headers: Maybe(Union(Header, Dict)) = None,
-        follow:  Bool = True,
-        timeout: Num = 11,
-        params:  Maybe(Params)=None,
+        data:    Maybe(Union(Dict, Str, Bytes))=None,
+        headers: Maybe(Union(Header, Dict))=None,
+        follow:  Bool=True,
+        timeout: Num=11,
+        params:  Maybe(Dict)=None,
     ) -> Response:
 
         url = _apply_params(url, params)
