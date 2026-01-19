@@ -12,6 +12,7 @@ from utils.mods.helper.http_ import (
 @model
 class Response:
     status: Enum(Str, "success", "failure")
+    success: Bool
     headers: Dict
     code: Int
     url: Url('http', 'https')
@@ -86,8 +87,10 @@ class http:
         parsed_data = _parse_content(resp_headers, raw_data)
 
         status = "success" if 200 <= code < 400 else "failure"
+        success = True if status == 'success' else False
 
         return Response(
+            success=success,
             status=status,
             headers=resp_headers,
             code=code,
