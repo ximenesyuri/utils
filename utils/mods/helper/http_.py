@@ -11,7 +11,7 @@ class Header:
     type: ContentTypes = "json"
     extra: Maybe(Dict) = None
 
-class Params(Dict):
+class Params(dict):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
