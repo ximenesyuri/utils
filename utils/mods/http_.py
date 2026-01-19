@@ -106,7 +106,7 @@ class http:
         headers: Maybe(Union(Header, Dict)) = None,
         follow:  Bool = True,
         timeout: Num = 11,
-        params:  Maybe(Params) = None,
+        params:  Maybe(Dict)=None,
     ) -> Response:
         try:
             return http.request(
@@ -128,7 +128,7 @@ class http:
         headers: Maybe(Union(Header, Dict))=Header(type='json'),
         follow:  Bool = True,
         timeout: Num = 10,
-        params:  Maybe(Params) = None,
+        params:  Maybe(Dict) = None,
     ) -> Response:
         try:
             return http.request(
@@ -150,7 +150,7 @@ class http:
         headers: Maybe(Union(Header, Dict)) = None,
         follow:  Bool = True,
         timeout: Num = 10,
-        params:  Maybe(Params) = None,
+        params:  Maybe(Dict) = None,
     ) -> Response:
         try:
             return http.request(
@@ -172,7 +172,7 @@ class http:
         headers: Maybe(Union(Header, Dict))=None,
         follow:  Bool = True,
         timeout: Num = 10,
-        params:  Maybe(Params) = None,
+        params:  Maybe(Dict) = None,
     ) -> Response:
         try:
             return http.request(
@@ -194,7 +194,7 @@ class http:
         headers: Maybe(Union(Header, Dict)) = None,
         follow:  Bool = True,
         timeout: Num = 10,
-        params:  Maybe(Params) = None,
+        params:  Maybe(Dict) = None,
     ) -> Response:
         try:
             return http.request(
