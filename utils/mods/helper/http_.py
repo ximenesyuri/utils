@@ -112,6 +112,7 @@ def _normalize_headers(headers):
     if headers is None:
         return {}
     if headers in Header:
-        return headers._build_header()
+        return _build_headers_dict(headers)
     if headers in Dict:
         return dict(headers)
+    return dict(headers)
