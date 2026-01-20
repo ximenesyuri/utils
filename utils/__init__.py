@@ -26,6 +26,7 @@ __all__ = [
     "thread",
     "cron",
     "http",
+    "ansi",
     "dt",
 ]
 
@@ -54,6 +55,7 @@ __lazy__ = {
     "thread":    ("utils.mods.thread",    "thread"),
     "cron":      ("utils.mods.cron",      "cron"),
     "http":      ("utils.mods.http_",      "http"),
+    "ansi":      ("utils.mods.ansi",       "ansi"),
     # alias: dt = datetime
     "dt":        ("utils.mods.datetime_", "datetime"),
 }
@@ -99,5 +101,6 @@ if __lsp__:
     from utils.mods.thread    import thread
     from utils.mods.cron      import cron
     from utils.mods.http_     import http
+    from utils.mods.ansi      import ansi
     dt = datetime
 
