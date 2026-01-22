@@ -5,14 +5,16 @@ __all__ = [
     'NotExists',
     'AlreadyExists',
     'AlreadSet',
-    'NotMatch'
+    'NotMatch',
+    'NotSet'
 ]
 
 __lazy__ = {
     "NotExists":      ("utils.mods.err", "NotExists"),
     "AlreadyExists":  ("utils.mods.err", "AlreadyExists"),
     "AlreadSet":      ("utils.mods.err", "AlreadySet"),
-    "NotMatch":       ("utils.mods.err", "NotMatch")
+    "NotMatch":       ("utils.mods.err", "NotMatch"),
+    "NotSet":         ("utils.mods.err", "NotSet")
 }
 
 def __getattr__(name):
@@ -31,4 +33,4 @@ def __dir__():
     return sorted(set(globals().keys()) | set(__all__))
 
 if __lazy__:
-    from utils.mods.err import AlreadyExists, AlreadySet, NotExists, NotMatch
+    from utils.mods.err import AlreadyExists, AlreadySet, NotExists, NotMatch, NotSet
