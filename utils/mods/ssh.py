@@ -94,7 +94,7 @@ class ssh:
                 raise SSHErr(e)
 
     @typed
-    def exec(host: Str, user: Str, key: Str, cmd: Union(Str, Tuple(Str), List(Str), File), cwd: Maybe(Str)=None) -> Tuple:
+    def exec(host: Str, user: Str, key: Str, cmd: Union(Str, Tuple(Str), List(Str), File), cwd: Maybe(Str)=None) -> Str:
         try:
             key_path, temp_key = ssh.key.prepare(key)
             try:
@@ -127,7 +127,7 @@ class ssh:
                 if stderr:
                     raise SSHErr(stderr)
 
-                return stdout, stderr
+                return stdout
             finally:
                 if temp_key and key_path and os.path.exists(key_path):
                     _cmd.rm(key_path)
