@@ -58,9 +58,9 @@ class SSHErr(Exception): pass
 class ssh:
     class key:
         @typed
-        def prepare(key: Union(Path, SSHKey(private=True))) -> Tuple:
+        def prepare(key: Union(File, SSHKey(private=True))) -> Tuple:
             try:
-                if key in Path:
+                if key in File:
                     return key, False
 
                 tmp_file = _cmd.mktemp.file()
@@ -71,7 +71,7 @@ class ssh:
                 raise SSHErr(e)
 
         @typed
-        def add(key: Union(Path, SSHKey(private=True))) -> Nill:
+        def add(key: Union(File, SSHKey(private=True))) -> Nill:
             try:
                 if "SSH_AUTH_SOCK" not in os.environ:
                     stderr, stdout = _cmd.run("ssh-agent -s")
