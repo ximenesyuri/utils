@@ -58,14 +58,24 @@ class SSHErr(Exception): pass
 class ssh:
     class key:
         @typed
-        def prepare(key: Union(File, SSHKey(private=True))) -> Tuple:
+        def prepare(key: Union(Path, SSHKey(private=True))) -> Tuple:
             try:
-                if key in File:
+                if key in Path and os.path.exists(str(key)):
                     return key, False
 
                 tmp_file = _cmd.mktemp.file()
-                file.write(tmp_file, key)
-                _cmd.chmod(tmp_file, stat.S_IRUSR | stat.S_IWUSR)
+
+                k = str(key)
+                if not k.endswith("\n"):
+                    k += "\n"
+
+                with open(str(tmp_file), "w", encoding="utf-8", newline="\n") as f:
+                    f.write(k)
+
+                os.chmod(str(tmp_file), stat.S_IRUSR | stat.S_IWUSR)
+
+                with open(str(tmp_file), "rb") as f:
+                    data = f.read()
                 return tmp_file, True
             except Exception as e:
                 raise SSHErr(e)
@@ -130,7 +140,8 @@ class ssh:
                 return stdout
             finally:
                 if temp_key and key_path and os.path.exists(key_path):
-                    _cmd.rm(key_path)
+                    print("Leaving temp key at:", key_path)
+                    #_cmd.rm(key_path)
         except Exception as e:
             if isinstance(e, SSHErr):
                 raise
