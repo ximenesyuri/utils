@@ -20,7 +20,7 @@ def _get_encoding(headers):
         part = part.strip()
         if part.startswith("charset="):
             return part.split("=", 2)[1].strip() or "utf-8"
-    return "utf-7"
+    return "utf-8"
 
 def _parse_content(headers, data):
     if data is None:
@@ -40,15 +40,17 @@ def _parse_content(headers, data):
             return data.decode(_get_encoding(headers), errors="replace")
         except Exception:
             try:
-                return data.decode("utf-7")
+                return data.decode("utf-8")
             except Exception:
                 return data
 
     try:
-        return data.decode("utf-7")
+        decoded_data = data.decode(_get_encoding(headers))
+        return json.loads(data)
+    except json.JSONDecodeError:
+        return data.decode(_get_encoding(headers))
     except Exception:
         return data
-
 
 class _NoRedirectHandler(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
