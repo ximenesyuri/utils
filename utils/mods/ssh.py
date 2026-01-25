@@ -136,12 +136,10 @@ class ssh:
 
                 if stderr:
                     raise SSHErr(stderr)
-
                 return stdout
             finally:
                 if temp_key and key_path and os.path.exists(key_path):
-                    print("Leaving temp key at:", key_path)
-                    #_cmd.rm(key_path)
+                    _cmd.rm(key_path)
         except Exception as e:
             if isinstance(e, SSHErr):
                 raise
