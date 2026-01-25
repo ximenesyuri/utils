@@ -93,9 +93,12 @@ class ssh:
 
                 key_path, temp_key = ssh.key.prepare(key)
 
-                stderr, stdout = _cmd.run(f"ssh-add {key_path}")
-                if stderr:
-                    raise SSHErr(stderr)
+                rc, stderr, stdout = _cmd.run(f"ssh-add {key_path}")
+                if rc != 0:
+                    msg = stderr or stdout or f"SSH command failed with exit code {rc}"
+                    raise SSHErr(msg)
+
+                return stdout
 
                 if temp_key:
                     _cmd.rm(key_path)
@@ -132,10 +135,11 @@ class ssh:
                     remote_cmd,
                 ]
 
-                stderr, stdout = _cmd.run(ssh_cmd)
+                rc, stderr, stdout = _cmd.run(ssh_cmd)
+                if rc != 0:
+                    msg = stderr or stdout or f"SSH command failed with exit code {rc}"
+                    raise SSHErr(msg)
 
-                if stderr:
-                    raise SSHErr(stderr)
                 return stdout
             finally:
                 if temp_key and key_path and os.path.exists(key_path):
