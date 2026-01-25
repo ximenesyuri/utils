@@ -55,6 +55,10 @@ class _NoRedirectHandler(HTTPRedirectHandler):
         return None
 
 def _build_headers_dict(headers):
+
+    if headers in Dict:
+        return headers
+
     headers_dict = {}
 
     if headers is None:
