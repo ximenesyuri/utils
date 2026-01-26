@@ -1,7 +1,6 @@
 from functools import lru_cache as cache
-from typed import model, Maybe, Len, Regex, Str, Union, null, TYPE
+from typed import Len, Regex, Str, Union, null, TYPE
 from utils.mods.path import Path
-from utils.mods.json_ import Json
 from utils.mods.url import Url
 
 Char    = Len(Str, 1)
@@ -31,10 +30,3 @@ def Extension(*exts):
         "__display__": class_name,
         "__null__": null(PathUrl)
     })
-
-@model
-class Result:
-    message: Maybe(Str)=None
-    data: Maybe(Json)=None
-
-Result.__display__ = "Result"

@@ -3,6 +3,8 @@ import sys
 from typing import TYPE_CHECKING as __lsp__
 from typed import typed, Str, Dict, Any, Maybe
 from typed.types import Callable
+from utils.mods.json_ import Json
+from utils.mods.helper.general import _Result
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
@@ -58,3 +60,10 @@ def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str))
 
     handler(full_message)
     return None
+
+@typed
+def Result(message: Maybe(Str)=None, data: Maybe(Json)=None, **kwargs: Dict(Str)) -> _Result:
+    return _Result(
+        message=Message(message=message, **kwargs),
+        data=data
+    )
