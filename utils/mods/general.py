@@ -1,7 +1,7 @@
 import importlib
 import sys
 from typing import TYPE_CHECKING as __lsp__
-from typed import typed, Str, Dict, Any
+from typed import typed, Str, Dict, Any, Maybe
 from typed.types import Callable
 
 def lazy(imports):
@@ -42,18 +42,16 @@ def lazy(imports):
     return __lsp__
 
 @typed
-def Message(
-    handler: Callable=print,
-    message: Str="",
-    **kwargs: Dict(Str)
-    ) -> Any:
+def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
     full_message = message.rstrip(":") + ":"
-
     if kwargs:
         parts = [f"{k}={v!r}" for k, v in kwargs.items()]
         full_message += " " + ", ".join(parts)
 
     full_message += "."
+
+    if handler is None:
+        return full_message
 
     if isinstance(handler, type) and issubclass(handler, BaseException):
         raise handler(full_message)
