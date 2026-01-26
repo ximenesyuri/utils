@@ -1,4 +1,4 @@
-from typed import typed, model, Maybe, Str, Dict, Any
+from typed import typed, TYPE, model, Maybe, Str, Dict, Any
 from typed.types import Callable
 from utils.mods.json_ import Json
 
@@ -28,7 +28,10 @@ def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str))
     handler(full_message)
     return None
 
-class RESULT(type):
+class RESULT(TYPE(_Result)):
+    def __instancecheck__(cls, instance):
+        return instance in _Result
+
     def __call__(cls, message: Maybe(Str)=None, data: Maybe(Json)=None, **kwargs: Dict(Str)):
         return _Result(
             message=Message(message=message, **kwargs) if message or kwargs else None,

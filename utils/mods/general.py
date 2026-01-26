@@ -1,7 +1,7 @@
 import importlib
 import sys
 from typing import TYPE_CHECKING as __lsp__
-from utils.mods.helper.general import Message, RESULT
+from utils.mods.helper.general import Message, RESULT, _Result
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
@@ -40,4 +40,4 @@ def lazy(imports):
 
     return __lsp__
 
-Result = RESULT("Result", tuple(), {"__display__": "Result"})
+Result = RESULT("Result", (_Result,), {"__display__": "Result"})
