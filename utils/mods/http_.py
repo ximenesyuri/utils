@@ -1,13 +1,16 @@
 from urllib.parse  import urlencode
 from urllib.request  import Request as _Request
 from urllib.error import HTTPError as _HTTPError
-from typed import typed, model, Str, Bool, Maybe, Dict, Union, Enum, Bytes, Int, List
+from typed import typed, model, Str, Bool, Maybe, Dict, Union, Enum, Bytes, Int
 from utils.mods.url import Url
 from utils.mods.number import Num
+from utils.mods.json_ import Json
 from utils.mods.helper.http_ import (
-    _make_opener, _apply_params, _normalize_headers, _parse_content,
-    Params, Header
+    _make_opener, _apply_params, _normalize_headers, _parse_content, Header
 )
+
+Data = Union(Json, Str, Bytes)
+Data.__display__ = "Data"
 
 @model
 class Response:
@@ -16,28 +19,19 @@ class Response:
     headers: Dict
     code: Int
     url: Url('http', 'https')
-    data: Maybe(Union(Str, List, Dict))=None
+    data: Maybe(Data)=None
     message: Maybe(Str)=None
+
+Response.__display__ = "Response"
 
 class HTTPErr(Exception): pass
 
 class http:
-    """
-    Minimal HTTP client based only on urllib, with a requests-like interface.
-
-    Usage:
-        resp = http.get(
-            "https://example.com",
-            params=Params(q="test"),
-            headers=Header(token="abc", type="json"),
-        )
-        print(resp.code, resp.headers, resp.data, resp.status, resp.message)
-    """
-
+    @typed
     def request(
         method:  Str,
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes))=None,
+        data:    Maybe(Data)=None,
         headers: Maybe(Union(Header, Dict))=None,
         follow:  Bool=True,
         timeout: Num=11,
@@ -77,6 +71,7 @@ class http:
                 raw_data = resp.read()
                 final_url = resp.geturl()
                 message = resp.msg
+
         except _HTTPError as e:
             code = e.code
             resp_headers = dict(e.headers.items()) if e.headers else {}
@@ -102,7 +97,7 @@ class http:
     @typed
     def get(
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes)) = None,
+        data:    Maybe(Data) = None,
         headers: Maybe(Union(Header, Dict)) = None,
         follow:  Bool = True,
         timeout: Num = 11,
@@ -124,7 +119,7 @@ class http:
     @typed
     def post(
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes)) = None,
+        data:    Maybe(Data) = None,
         headers: Maybe(Union(Header, Dict))=Header(type='json'),
         follow:  Bool = True,
         timeout: Num = 10,
@@ -146,11 +141,11 @@ class http:
     @typed
     def put(
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes)) = None,
-        headers: Maybe(Union(Header, Dict)) = None,
-        follow:  Bool = True,
-        timeout: Num = 10,
-        params:  Maybe(Dict) = None,
+        data:    Maybe(Union(Data))=None,
+        headers: Maybe(Union(Header, Dict))=None,
+        follow:  Bool=True,
+        timeout: Num=10,
+        params:  Maybe(Dict)=None,
     ) -> Response:
         try:
             return http.request(
@@ -168,7 +163,7 @@ class http:
     @typed
     def patch(
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes)) = None,
+        data:    Maybe(Data)=None,
         headers: Maybe(Union(Header, Dict))=None,
         follow:  Bool = True,
         timeout: Num = 10,
@@ -190,11 +185,11 @@ class http:
     @typed
     def delete(
         url:     Url('http', 'https'),
-        data:    Maybe(Union(Dict, Str, Bytes)) = None,
-        headers: Maybe(Union(Header, Dict)) = None,
-        follow:  Bool = True,
-        timeout: Num = 10,
-        params:  Maybe(Dict) = None,
+        data:    Maybe(Data)=None,
+        headers: Maybe(Union(Header, Dict))=None,
+        follow:  Bool=True,
+        timeout: Num=10,
+        params:  Maybe(Dict)=None,
     ) -> Response:
         try:
             return http.request(

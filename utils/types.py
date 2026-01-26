@@ -34,7 +34,8 @@ __all__ = [
     "Header",
     "Params",
     "Response",
-    "Result"
+    "Result",
+    "Data"
 ]
 
 __lazy__ = {
@@ -80,7 +81,8 @@ __lazy__ = {
 
     "Header":    ("utils.mods.helper.http_",    "Header"),
     "Params":    ("utils.mods.helper.http_",    "Params"),
-    "Response":  ("utils.mods.http_",           "Response")
+    "Response":  ("utils.mods.http_",           "Response"),
+    "Data":      ("utils.mods.http_",           "Data")
 }
 
 
@@ -109,7 +111,7 @@ if __lsp__:
     from utils.mods.url    import Url, Hostname
     from utils.mods.number import Nat, Num, Even, Odd, Pos, Neg
     from utils.mods.ip     import IPv4, IPv6
-    from utils.mods.helper.types import Char, Email, Extension, PathUrl
+    from utils.mods.helper.types import Char, Email, Extension, PathUrl, Result
     from utils.mods.helper.http_ import Header, Params
-    from utils.mods.http_ import Response
+    from utils.mods.http_ import Response, Data
 
