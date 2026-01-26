@@ -2,6 +2,7 @@ from importlib import import_module as __import__
 from typing import TYPE_CHECKING as __lsp__
 
 __all__ = [
+    'Exception',
     'NotExists',
     'AlreadyExists',
     'AlreadSet',
@@ -10,6 +11,7 @@ __all__ = [
 ]
 
 __lazy__ = {
+    "Exception":      ("utils.mods.err", "Exception"),
     "NotExists":      ("utils.mods.err", "NotExists"),
     "AlreadyExists":  ("utils.mods.err", "AlreadyExists"),
     "AlreadSet":      ("utils.mods.err", "AlreadySet"),
@@ -33,4 +35,4 @@ def __dir__():
     return sorted(set(globals().keys()) | set(__all__))
 
 if __lazy__:
-    from utils.mods.err import AlreadyExists, AlreadySet, NotExists, NotMatch, NotSet
+    from utils.mods.err import Exception, AlreadyExists, AlreadySet, NotExists, NotMatch, NotSet

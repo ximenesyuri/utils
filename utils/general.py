@@ -8,9 +8,9 @@ __all__ = [
 ]
 
 __lazy__ = {
-    "lazy":     ("utils.mods.general", "lazy"),
-    "Message":  ("utils.mods.general", "Message"),
-    "Result":   ("utils.mods.general", "Result")
+    "lazy":      ("utils.mods.general", "lazy"),
+    "Message":   ("utils.mods.general", "Message"),
+    "Result":    ("utils.mods.general", "Result"),
 }
 
 def __getattr__(name):
