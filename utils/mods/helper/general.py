@@ -1,4 +1,5 @@
-from typed import model, Maybe, Str
+from typed import typed, model, Maybe, Str, Dict, Any
+from typed.types import Callable
 from utils.mods.json_ import Json
 
 @model
@@ -7,3 +8,29 @@ class _Result:
     data: Maybe(Json)=None
 
 _Result.__display__ = "Result"
+
+@typed
+def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
+    if not kwargs:
+        full_message = message
+    else:
+        full_message = message.rstrip(":") + ":"
+        parts = [f"{k}={v!r}" for k, v in kwargs.items()]
+        full_message += " " + ", ".join(parts)
+        full_message += "."
+
+    if handler is None:
+        return full_message
+
+    if isinstance(handler, type) and issubclass(handler, BaseException):
+        raise handler(full_message)
+
+    handler(full_message)
+    return None
+
+class RESULT(type):
+    def __call__(cls, message: Maybe(Str)=None, data: Maybe(Json)=None, **kwargs: Dict(Str)):
+        return _Result(
+            message=Message(message=message, **kwargs) if message or kwargs else None,
+            data=data
+        )

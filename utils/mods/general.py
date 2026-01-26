@@ -1,10 +1,7 @@
 import importlib
 import sys
 from typing import TYPE_CHECKING as __lsp__
-from typed import typed, Str, Dict, Any, Maybe
-from typed.types import Callable
-from utils.mods.json_ import Json
-from utils.mods.helper.general import _Result
+from utils.mods.helper.general import Message, RESULT
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
@@ -43,27 +40,4 @@ def lazy(imports):
 
     return __lsp__
 
-@typed
-def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
-    full_message = message.rstrip(":") + ":"
-    if kwargs:
-        parts = [f"{k}={v!r}" for k, v in kwargs.items()]
-        full_message += " " + ", ".join(parts)
-
-    full_message += "."
-
-    if handler is None:
-        return full_message
-
-    if isinstance(handler, type) and issubclass(handler, BaseException):
-        raise handler(full_message)
-
-    handler(full_message)
-    return None
-
-@typed
-def Result(message: Maybe(Str)=None, data: Maybe(Json)=None, **kwargs: Dict(Str)) -> _Result:
-    return _Result(
-        message=Message(message=message, **kwargs),
-        data=data
-    )
+Result = RESULT("Result", tuple(), {"__display__": "Result"})
