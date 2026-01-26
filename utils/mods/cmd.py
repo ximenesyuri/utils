@@ -41,18 +41,15 @@ class cmd:
                 env.update(envs)
 
             if terminate:
-                try:
-                    process = subprocess.run(
-                        cmd_list,
-                        cwd=cwd,
-                        capture_output=True,
-                        text=True,
-                        env=env,
-                        check=True
-                    )
-                    return process.stderr, process.stdout
-                except subprocess.CalledProcessError as e:
-                    return e.stderr, e.stdout
+                process = subprocess.run(
+                    cmd_list,
+                    cwd=cwd,
+                    capture_output=True,
+                    text=True,
+                    env=env,
+                    check=False
+                )
+                return process.returncode, process.stderr, process.stdout
             else:
                 try:
                     process = subprocess.Popen(

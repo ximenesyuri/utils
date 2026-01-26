@@ -33,7 +33,8 @@ __all__ = [
     "PathUrl",
     "Header",
     "Params",
-    "Response"
+    "Response",
+    "Result"
 ]
 
 __lazy__ = {
@@ -75,6 +76,7 @@ __lazy__ = {
     "Email":     ("utils.mods.helper.types",    "Email"),
     "Extension": ("utils.mods.helper.types",    "Extension"),
     "PathUrl":   ("utils.mods.helper.types",    "PathUrl"),
+    "Result":    ("utils.mods.helper.types",    "Result"),
 
     "Header":    ("utils.mods.helper.http_",    "Header"),
     "Params":    ("utils.mods.helper.http_",    "Params"),
