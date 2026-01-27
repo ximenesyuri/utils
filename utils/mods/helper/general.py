@@ -6,7 +6,7 @@ from utils.mods.json_ import Json
 class _Result:
     message: Maybe(Str)=None
     data:    Maybe(Json)=None
-    success: Maybe(Bool)=None
+    success: Bool=True
 
 _Result.__display__ = "Result"
 _Result.__name__ = "Result"
@@ -36,9 +36,9 @@ class RESULT(TYPE(_Result)):
 
     def __call__(
         cls,
-        message: Maybe(Str)=None,
-        data: Maybe(Json)=None,
-        success: Maybe(Bool)=None,
+        message:  Maybe(Str)=None,
+        data:     Maybe(Json)=None,
+        success:  Bool=True,
         **kwargs: Dict(Str)
     ):
         return _Result(
