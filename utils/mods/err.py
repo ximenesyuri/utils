@@ -8,8 +8,15 @@ class Exception(BaseException):
         else:
             super().__init__()
 
-class AlreadyExists(Exception): pass
-class NotExists(Exception): pass
 class AlreadySet(Exception): pass
-class NotMatch(Exception): pass
+class AlreadyExists(Exception): pass
+class AlreadyRegistered(Exception): pass
+class AlreadyDefined(Exception): pass
+
 class NotSet(Exception): pass
+class NotExists(Exception): pass
+class NotRegistered(Exception): pass
+class NotDefined(Exception): pass
+
+class NotMatch(Exception): pass
+class NotFound(Exception): pass
