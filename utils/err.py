@@ -51,6 +51,6 @@ if __lazy__:
         AlreadySet,        NotSet,
         AlreadyDefined,    NotDefined,
         AlreadyRegistered, NotRegistered,
-        AlreadyConnected,  NotConnected
+        AlreadyConnected,  NotConnected,
         NotMatch, NotFound
     )
