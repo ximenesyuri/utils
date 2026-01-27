@@ -1,10 +1,9 @@
-from typed import typed, TYPE, model, Maybe, Str, Dict, Any, Bool, Enum
+from typed import typed, TYPE, model, Maybe, Str, Dict, Any, Bool
 from typed.types import Callable
 from utils.mods.json_ import Json
 
 @model
 class _Result:
-    status:  Maybe(Enum(Str, "success", "failure"))
     message: Maybe(Str)=None
     data:    Maybe(Json)=None
     success: Maybe(Bool)=None
@@ -35,8 +34,15 @@ class RESULT(TYPE(_Result)):
     def __instancecheck__(cls, instance):
         return instance in _Result
 
-    def __call__(cls, message: Maybe(Str)=None, data: Maybe(Json)=None, **kwargs: Dict(Str)):
+    def __call__(
+        cls,
+        message: Maybe(Str)=None,
+        data: Maybe(Json)=None,
+        success: Maybe(Bool)=None,
+        **kwargs: Dict(Str)
+    ):
         return _Result(
             message=Message(message=message, **kwargs) if message or kwargs else None,
-            data=data
+            data=data,
+            success=success
         )
