@@ -3,20 +3,27 @@ from typing import TYPE_CHECKING as __lsp__
 
 __all__ = [
     'Exception',
-    'NotExists',
-    'AlreadyExists',
-    'AlreadSet',
-    'NotMatch',
-    'NotSet'
+    'AlreadyExists',     'NotExists',
+    'AlreadSet',         'NotSet'
+    'AlredyDefined',     'NotDefined',
+    'AlreadyRegistered', 'NotRegistered',
+
+    'NotMatch', 'NotFound'
 ]
 
 __lazy__ = {
-    "Exception":      ("utils.mods.err", "Exception"),
-    "NotExists":      ("utils.mods.err", "NotExists"),
-    "AlreadyExists":  ("utils.mods.err", "AlreadyExists"),
-    "AlreadSet":      ("utils.mods.err", "AlreadySet"),
-    "NotMatch":       ("utils.mods.err", "NotMatch"),
-    "NotSet":         ("utils.mods.err", "NotSet")
+    "Exception":         ("utils.mods.err", "Exception"),
+    "AlreadyExists":     ("utils.mods.err", "AlreadyExists"),
+    "NotExists":         ("utils.mods.err", "NotExists"),
+    "AlreadSet":         ("utils.mods.err", "AlreadySet"),
+    "NotSet":            ("utils.mods.err", "NotSet"),
+    "AlreadyDefined":    ("utils.mods.err", "AlreadyDefined"),
+    "NotDefined":        ("utils.mods.err", "NotDefined"),
+    "AlreadyRegistered": ("utils.mods.err", "AlreadyRegistered"),
+    "NotRegistred":      ("utils.mods.err", "NotRegistered"),
+
+    "NotMatch":          ("utils.mods.err", "NotMatch"),
+    "NotFound":          ("utils.mods.err", "NotFound")
 }
 
 def __getattr__(name):
@@ -35,4 +42,10 @@ def __dir__():
     return sorted(set(globals().keys()) | set(__all__))
 
 if __lazy__:
-    from utils.mods.err import Exception, AlreadyExists, AlreadySet, NotExists, NotMatch, NotSet
+    from utils.mods.err import (
+        Exception,
+        AlreadyExists, NotExists,
+        AlreadySet, NotSet,
+        AlreadyDefined, NotDefined,
+        AlreadyRegistered, NotRegistered,
+        NotMatch, NotFound
