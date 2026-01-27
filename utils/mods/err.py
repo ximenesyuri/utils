@@ -24,3 +24,4 @@ class NotMatch(Exception): pass
 class NotFound(Exception): pass
 
 class WrongFormat(Exception): pass
+class Failed(Exception): pass

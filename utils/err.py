@@ -10,7 +10,8 @@ __all__ = [
     'AlreadyConnected',  'NotConnected',
 
     'NotMatch', 'NotFound',
-    'WrongFormat'
+    'WrongFormat',
+    'Failed'
 ]
 
 __lazy__ = {
@@ -22,13 +23,14 @@ __lazy__ = {
     "AlreadyDefined":    ("utils.mods.err", "AlreadyDefined"),
     "NotDefined":        ("utils.mods.err", "NotDefined"),
     "AlreadyRegistered": ("utils.mods.err", "AlreadyRegistered"),
-    "NotRegistred":      ("utils.mods.err", "NotRegistered"),
+    "NotRegistered":     ("utils.mods.err", "NotRegistered"),
     "AlreadyConnected":  ("utils.mods.err", "AlreadyConnected"),
     "NotConnected":      ("utils.mods.err", "NotConnected"),
 
     "NotMatch":          ("utils.mods.err", "NotMatch"),
     "NotFound":          ("utils.mods.err", "NotFound"),
     "WrongFormat":       ("utils.mods.err", "WrongFormat"),
+    "Failed":            ("utils.mods.err", "Failed"),
 }
 
 def __getattr__(name):
@@ -55,5 +57,6 @@ if __lazy__:
         AlreadyRegistered, NotRegistered,
         AlreadyConnected,  NotConnected,
         NotMatch, NotFound,
-        WrongFormat
+        WrongFormat,
+        Failed
     )
