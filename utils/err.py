@@ -49,3 +49,4 @@ if __lazy__:
         AlreadyDefined, NotDefined,
         AlreadyRegistered, NotRegistered,
         NotMatch, NotFound
+    )
