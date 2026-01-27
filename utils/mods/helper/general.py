@@ -1,13 +1,16 @@
-from typed import typed, TYPE, model, Maybe, Str, Dict, Any, Union
-from typed.types import Callable, Class
+from typed import typed, TYPE, model, Maybe, Str, Dict, Any, Bool, Enum
+from typed.types import Callable
 from utils.mods.json_ import Json
 
 @model
 class _Result:
+    status:  Maybe(Enum(Str, "success", "failure"))
     message: Maybe(Str)=None
-    data: Maybe(Union(Json, TYPE, Class))=None
+    data:    Maybe(Json)=None
+    success: Maybe(Bool)=None
 
 _Result.__display__ = "Result"
+_Result.__name__ = "Result"
 
 @typed
 def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
