@@ -23,3 +23,4 @@ class NotConnected(Exception): pass
 class NotMatch(Exception): pass
 class NotFound(Exception): pass
 
+class WrongFormat(Exception): pass
