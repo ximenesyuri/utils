@@ -7,6 +7,7 @@ __all__ = [
     'AlreadSet',         'NotSet'
     'AlredyDefined',     'NotDefined',
     'AlreadyRegistered', 'NotRegistered',
+    'AlreadyConnected',  'NotConnected',
 
     'NotMatch', 'NotFound'
 ]
@@ -21,6 +22,8 @@ __lazy__ = {
     "NotDefined":        ("utils.mods.err", "NotDefined"),
     "AlreadyRegistered": ("utils.mods.err", "AlreadyRegistered"),
     "NotRegistred":      ("utils.mods.err", "NotRegistered"),
+    "AlreadyConnected":  ("utils.mods.err", "AlreadyConnected"),
+    "NotConnected":      ("utils.mods.err", "NotConnected"),
 
     "NotMatch":          ("utils.mods.err", "NotMatch"),
     "NotFound":          ("utils.mods.err", "NotFound")
@@ -44,9 +47,10 @@ def __dir__():
 if __lazy__:
     from utils.mods.err import (
         Exception,
-        AlreadyExists, NotExists,
-        AlreadySet, NotSet,
-        AlreadyDefined, NotDefined,
+        AlreadyExists,     NotExists,
+        AlreadySet,        NotSet,
+        AlreadyDefined,    NotDefined,
         AlreadyRegistered, NotRegistered,
+        AlreadyConnected,  NotConnected
         NotMatch, NotFound
     )

@@ -12,11 +12,14 @@ class AlreadySet(Exception): pass
 class AlreadyExists(Exception): pass
 class AlreadyRegistered(Exception): pass
 class AlreadyDefined(Exception): pass
+class AlreadyConnected(Exception): pass
 
 class NotSet(Exception): pass
 class NotExists(Exception): pass
 class NotRegistered(Exception): pass
 class NotDefined(Exception): pass
+class NotConnected(Exception): pass
 
 class NotMatch(Exception): pass
 class NotFound(Exception): pass
+

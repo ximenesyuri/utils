@@ -1,11 +1,11 @@
-from typed import typed, TYPE, model, Maybe, Str, Dict, Any
-from typed.types import Callable
+from typed import typed, TYPE, model, Maybe, Str, Dict, Any, Union
+from typed.types import Callable, Class
 from utils.mods.json_ import Json
 
 @model
 class _Result:
     message: Maybe(Str)=None
-    data: Maybe(Json)=None
+    data: Maybe(Union(Json, TYPE, Class))=None
 
 _Result.__display__ = "Result"
 
