@@ -7,7 +7,6 @@ from utils.mods.json_ import Json
 from utils.mods.helper.general import Message
 from utils.mods.helper.types import Client
 from utils.mods.func import func
-from utils.mods.err import Exception
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
