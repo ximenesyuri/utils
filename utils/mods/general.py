@@ -79,6 +79,7 @@ class result:
             globals()['propagate'].failure(res)
         return res.data
 
+
 class _Propagate(Exception):
     def __init__(self, result):
         self.result = result
@@ -102,6 +103,13 @@ class Action:
     failure = staticmethod(result.failure)
     data = staticmethod(result.data)
     propagate = propagate
+
+    @typed
+    def run(action: Any, propagate: Bool=True, **kwargs: Dict(Str)) -> Result:
+        res = action(**kwargs)
+        if propagate:
+            globals()['propagate'].failure(res)
+        return res
 
     def __init__(self, Error=None, message=None):
         if Error is None:
