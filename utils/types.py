@@ -31,6 +31,7 @@ __all__ = [
     "Email",
     "Extension",
     "PathUrl",
+    "Client",
     "Header",
     "Params",
     "Response",
@@ -76,6 +77,8 @@ __lazy__ = {
     "Email":     ("utils.mods.helper.types",    "Email"),
     "Extension": ("utils.mods.helper.types",    "Extension"),
     "PathUrl":   ("utils.mods.helper.types",    "PathUrl"),
+    "Client":    ("utils.mods.helper.types",    "Client"),
+
 
     "Header":    ("utils.mods.helper.http_",    "Header"),
     "Params":    ("utils.mods.helper.http_",    "Params"),
@@ -109,7 +112,7 @@ if __lsp__:
     from utils.mods.url    import Url, Hostname
     from utils.mods.number import Nat, Num, Even, Odd, Pos, Neg
     from utils.mods.ip     import IPv4, IPv6
-    from utils.mods.helper.types import Char, Email, Extension, PathUrl
+    from utils.mods.helper.types import Char, Email, Extension, PathUrl, Client
     from utils.mods.helper.http_ import Header, Params
     from utils.mods.http_ import Response, Data
 

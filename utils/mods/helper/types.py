@@ -30,3 +30,6 @@ def Extension(*exts):
         "__display__": class_name,
         "__null__": null(PathUrl)
     })
+
+class Client: pass
+Client.__display__ = "Client"

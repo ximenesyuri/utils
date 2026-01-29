@@ -1,9 +1,13 @@
 import importlib
 import sys
+import functools
 from typing import TYPE_CHECKING as __lsp__
-from typed import typed, model, Dict, Union, Maybe, Str, Bool, Bytes, Int
+from typed import typed, model, Dict, Union, Maybe, Str, Bool, Bytes, Int, name
 from utils.mods.json_ import Json
 from utils.mods.helper.general import Message
+from utils.mods.helper.types import Client
+from utils.mods.func import func
+from utils.mods.err import Exception
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
@@ -66,3 +70,59 @@ class result:
             data=data,
             success=False
         )
+
+class _Propagate(Exception):
+    def __init__(self, result):
+        self.result = result
+
+class propagate:
+    @typed
+    def failure(res: Result) -> Result:
+        if not res.success:
+            raise _Propagate(res)
+        return res
+
+    @typed
+    def success(res: Result) -> Result:
+        if res.success:
+            raise _Propagate(res)
+        return res
+
+def Action(Error=None):
+    if Error is None:
+        typed_ = typed
+    if isinstance(Error, type) and issubclass(Error, BaseException):
+        typed_ = func.eval(typed, enclose=Error)
+    elif Error in Str:
+        typed_ = func.eval(typed, enclose=type(Error, (Exception,), {}))
+    else:
+        raise TypeError("Error must be an exception class or a string")
+
+    def decorator(func=None, **kwargs):
+        def apply(f):
+            typed_func = typed_(f, **kwargs)
+            cod = getattr(typed_func, "cod", None)
+            if cod is not Result and not (isinstance(cod, type) and issubclass(cod, Client)):
+                raise TypeError(
+                    f"Codomain mismatch in function '{name(f)}':\n"
+                    "    [expected_type] 'Result'\n"
+                    f"    [received_type] '{name(cod)}'"
+                )
+            if cod is Result:
+                @functools.wraps(f)
+                def wrapper(*args, **kw):
+                    try:
+                        return typed_func(*args, **kw)
+                    except _Propagate as exc:
+                        return exc.result
+
+                wrapper.cod = cod
+                if hasattr(typed_func, "dom"):
+                    wrapper.dom = typed_func.dom
+                return wrapper
+            return typed_func
+        if func is None:
+            return apply
+        else:
+            return apply(func)
+    return decorator

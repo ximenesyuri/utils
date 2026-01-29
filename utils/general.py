@@ -5,7 +5,9 @@ __all__ = [
     'lazy',
     'Message',
     'Result',
-    'result'
+    'result',
+    'propagate',
+    'Action'
 ]
 
 __lazy__ = {
@@ -13,6 +15,8 @@ __lazy__ = {
     "Message":   ("utils.mods.general", "Message"),
     "Result":    ("utils.mods.general", "Result"),
     "result":    ("utils.mods.general", "result"),
+    "propagate": ("utils.mods.general", "propagate"),
+    "Action":    ("utils.mods.general", "Action")
 }
 
 def __getattr__(name):
@@ -31,4 +35,4 @@ def __dir__():
     return sorted(set(globals().keys()) | set(__all__))
 
 if __lazy__:
-    from utils.mods.general import lazy, Message, Result, result
+    from utils.mods.general import lazy, Message, Result, result, propagate, Action
