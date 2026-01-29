@@ -2,7 +2,7 @@ import importlib
 import sys
 import functools
 from typing import TYPE_CHECKING as __lsp__
-from typed import typed, model, Dict, Union, Maybe, Str, Bool, Bytes, Int, name
+from typed import typed, model, Dict, Union, Maybe, Str, Bool, Bytes, Int, name, Any
 from utils.mods.json_ import Json
 from utils.mods.helper.general import Message
 from utils.mods.helper.types import Client
@@ -63,12 +63,21 @@ class result:
             data=data,
             success=True
         )
+
+    @typed
     def failure(message: Maybe(Str)=None, data: Maybe(ResultData)=None, **kwargs: Dict(Str)) -> Result:
         return Result(
             message=Message(message=message, **kwargs) if message or kwargs else None,
             data=data,
             success=False
         )
+
+    @typed
+    def data(action: Any, propagate: Bool=True, **kwargs: Dict(Str)):
+        res = action(**kwargs)
+        if propagate:
+            globals()['propagate'].failure(res)
+        return res.data
 
 class _Propagate(Exception):
     def __init__(self, result):
@@ -87,13 +96,20 @@ class propagate:
             raise _Propagate(res)
         return res
 
-def Action(Error=None):
+
+def Action(Error=None, message=None):
     if Error is None:
         typed_ = typed
     if isinstance(Error, type) and issubclass(Error, BaseException):
-        typed_ = func.eval(typed, enclose=Error)
+        if message:
+            typed_ = func.eval(typed, enclose=Error, message=message)
+        else:
+            typed_ = func.eval(typed, enclose=Error)
     elif Error in Str:
-        typed_ = func.eval(typed, enclose=type(Error, (Exception,), {}))
+        if message:
+            typed_ = func.eval(typed, enclose=type(Error, (Exception,), {}), message=message)
+        else:
+            typed_ = func.eval(typed, enclose=type(Error, (Exception,), {}))
     else:
         raise TypeError("Error must be an exception class or a string")
 
@@ -124,4 +140,10 @@ def Action(Error=None):
             return apply
         else:
             return apply(func)
+
+    decorator.success = result.success
+    decorator.failure = result.failure
+    decorator.data = result.data
+    decorator.propagate = propagate
+
     return decorator
