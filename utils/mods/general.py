@@ -1,12 +1,8 @@
 import importlib
 import sys
-import functools
 from typing import TYPE_CHECKING as __lsp__
-from typed import typed, model, Dict, Union, Maybe, Str, Bool, Bytes, Int, Any
-from utils.mods.json_ import Json
-from utils.mods.helper.general import Message
-from utils.mods.helper.types import Client
-from utils.mods.func import func
+from typed import typed, Maybe, Dict, Str, Any
+from typed.types import Callable
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
@@ -45,121 +41,92 @@ def lazy(imports):
 
     return __lsp__
 
-ResultData = Union(Json, Str, Int, Bytes)
+class _Checker:
+    def __init__(self, values, aggregator):
+        self.values = values
+        self.aggregator = aggregator
 
-@model
-class Result:
-    message: Maybe(Str)=None
-    data:    Maybe(ResultData)=None
-    success: Bool=True
+    def _evaluate_comparison(self, op, other):
+        results = []
+        errors = []
 
-Result.__display__ = "Result"
+        for value in self.values:
+            try:
+                result = op(value, other)
+                results.append(result)
+            except Exception as e:
+                errors.append(e)
+        if len(errors) == len(self.values) and len(self.values) > 0:
+            raise errors[0]
+        return self.aggregator(results) if results else False
 
-class result:
-    @typed
-    def success(message: Maybe(Str)=None, data: Maybe(ResultData)=None, **kwargs: Dict(Str)) -> Result:
-        return Result(
-            message=Message(message=message, **kwargs) if message or kwargs else None,
-            data=data,
-            success=True
-        )
+    def __eq__(self, other):
+        return self._evaluate_comparison(lambda x, y: x == y, other)
 
-    @typed
-    def failure(message: Maybe(Str)=None, data: Maybe(ResultData)=None, **kwargs: Dict(Str)) -> Result:
-        return Result(
-            message=Message(message=message, **kwargs) if message or kwargs else None,
-            data=data,
-            success=False
-        )
+    def __ne__(self, other):
+        return self._evaluate_comparison(lambda x, y: x != y, other)
 
-    @typed
-    def data(action: Any, propagate: Bool=True, **kwargs: Dict(Str)) -> Maybe(ResultData):
-        res = action(**kwargs)
-        if propagate:
-            globals()['propagate'].failure(res)
-        return res.data
+    def __lt__(self, other):
+        return self._evaluate_comparison(lambda x, y: x < y, other)
 
+    def __le__(self, other):
+        return self._evaluate_comparison(lambda x, y: x <= y, other)
 
-class _Propagate(Exception):
-    def __init__(self, result):
-        self.result = result
+    def __gt__(self, other):
+        return self._evaluate_comparison(lambda x, y: x > y, other)
 
-class propagate:
-    @typed
-    def failure(res: Result) -> Result:
-        if not res.success:
-            raise _Propagate(res)
-        return res
+    def __ge__(self, other):
+        return self._evaluate_comparison(lambda x, y: x >= y, other)
 
-    @typed
-    def success(res: Result) -> Result:
-        if res.success:
-            raise _Propagate(res)
-        return res
+    def __contains__(self, item):
+        results = []
+        errors = []
 
+        for value in self.values:
+            try:
+                result = item in value
+                results.append(result)
+            except Exception as e:
+                errors.append(e)
 
-class Action:
-    success = staticmethod(result.success)
-    failure = staticmethod(result.failure)
-    data = staticmethod(result.data)
-    propagate = propagate
+        if len(errors) == len(self.values) and len(self.values) > 0:
+            raise errors[0]
 
-    @typed
-    def run(action: Any, propagate: Bool=True, **kwargs: Dict(Str)) -> Result:
-        res = action(**kwargs)
-        if propagate:
-            globals()['propagate'].failure(res)
-        return res
+        return self.aggregator(results) if results else False
 
-    def __init__(self, Error=None, message=None):
-        if Error is None:
-            typed_ = typed
-        elif isinstance(Error, type) and issubclass(Error, BaseException):
-            if message:
-                typed_ = func.eval(typed, enclose=Error, message=message)
-            else:
-                typed_ = func.eval(typed, enclose=Error)
-        elif Error in Str:
-            exc_type = type(Error, (Exception,), {})
-            if message:
-                typed_ = func.eval(typed, enclose=exc_type, message=message)
-            else:
-                typed_ = func.eval(typed, enclose=exc_type)
-        else:
-            raise TypeError("Error must be an exception class or a string")
+    def is_(self, other):
+        results = [x is other for x in self.values]
+        return self.aggregator(results)
 
-        self._typed = typed_
+    def is_not(self, other):
+        results = [x is not other for x in self.values]
+        return self.aggregator(results)
 
-    def __call__(self, func=None, **kwargs):
-        typed_ = self._typed
+class Checker:
+    def __init__(self, aggregator):
+        self.aggregator = aggregator
 
-        def apply(f):
-            typed_func = typed_(f, **kwargs)
-            cod = getattr(typed_func, "cod", None)
-            if cod is not Result and not (isinstance(cod, type) and issubclass(cod, Client)):
-                from typed import name
-                raise TypeError(
-                    f"Codomain mismatch in function '{name(f)}':\n"
-                    "    [expected_type] 'Result'\n"
-                    f"    [received_type] '{name(cod)}'"
-                )
+    def __call__(self, *args):
+        return _Checker(args, self.aggregator)
 
-            if cod is Result:
-                @functools.wraps(f)
-                def wrapper(*args, **kw):
-                    try:
-                        return typed_func(*args, **kw)
-                    except _Propagate as exc:
-                        return exc.result
+some = Checker(any)
+every = Checker(all)
 
-                wrapper.cod = cod
-                if hasattr(typed_func, "dom"):
-                    wrapper.dom = typed_func.dom
-                return wrapper
+@typed
+def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
+    if not kwargs:
+        full_message = message
+    else:
+        full_message = message.rstrip(":") + ":"
+        parts = [f"{k}={v!r}" for k, v in kwargs.items()]
+        full_message += " " + ", ".join(parts)
+        full_message += "."
 
-            return typed_func
+    if handler is None:
+        return full_message
 
-        if func is None:
-            return apply
-        else:
-            return apply(func)
+    if isinstance(handler, type) and issubclass(handler, BaseException):
+        raise handler(full_message)
+
+    handler(full_message)
+    return None
