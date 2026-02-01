@@ -26,7 +26,81 @@ Flat.__null__  = {}
 
 class JsonErr(Exception): pass
 
+class JsonWrapper:
+    def __init__(self, data):
+        self._raw = data
+        self._flat = json.flat(data)
+
+    def __getattr__(self, key):
+        if key in self._flat:
+            return self._flat[key]
+        subkeys = {k[len(key)+1:]: v for k, v in self._flat.items() if k.startswith(key + ".")}
+        if subkeys:
+            nested = json.unflat(subkeys)
+            return JsonWrapper(nested)
+        raise AttributeError(f"'{type(self).__name__}' has no attribute '{key}'")
+
+    def __setattr__(self, key, value):
+        if key.startswith("_"):
+            super().__setattr__(key, value)
+        else:
+            path_key = key
+            json.set(path_key, value, self._raw)
+            self._flat[path_key] = value
+
+    def __getitem__(self, key):
+        return self._raw[key]
+
+    def __setitem__(self, key, value):
+        self._raw[key] = value
+        self._flat = json.flat(self._raw)
+
+    def __delitem__(self, key):
+        del self._raw[key]
+        self._flat = json.flat(self._raw)
+
+    def __contains__(self, key):
+        return key in self._raw
+
+    def __iter__(self):
+        return iter(self._raw)
+
+    def __len__(self):
+        return len(self._raw)
+
+    def __repr__(self):
+        return repr(self._raw)
+
+    def __str__(self):
+        return str(self._raw)
+
+    def __call__(self, data=None):
+        if data is not None:
+            return json(data)
+        return self
+
+def _is_valid_json_data(data):
+    try:
+        json_.loads(json_.dumps(data))
+        return True
+    except (TypeError, ValueError):
+        return False
+
 class json:
+    def __new__(cls, data=None):
+        if hasattr(data, '__json__'):
+            try:
+                json_data = data.__json__
+                return cls.__new__(cls, json_data)
+            except Exception as e:
+                raise JsonErr(f"Failed to get JSON data from __json__ method: {e}")
+        if not _is_valid_json_data(data):
+            raise JsonErr(f"Invalid JSON data: {data}")
+        if isinstance(data, dict):
+            return JsonWrapper(data)
+        else:
+            return super().__new__(cls)
+
     @typed
     def read(json_file: Path='') -> Json:
         try:
