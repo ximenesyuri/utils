@@ -79,6 +79,10 @@ class JsonWrapper:
             return json(data)
         return self
 
+    @property
+    def __json__(self):
+        return self._raw
+
 def _is_valid_json_data(data):
     try:
         json_.loads(json_.dumps(data))
