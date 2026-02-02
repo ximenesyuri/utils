@@ -3,13 +3,13 @@ from typing import TYPE_CHECKING as __lsp__
 
 __all__ = [
     'lazy',
-    'Message',
+    'message',
     'some', 'every'
 ]
 
 __lazy__ = {
     "lazy":      ("utils.mods.general", "lazy"),
-    "Message":   ("utils.mods.general", "Message"),
+    "message":   ("utils.mods.general", "Message"),
     "some":      ("utils.mods.general", "some"),
     "every":     ("utils.mods.general", "every")
 }
@@ -30,4 +30,4 @@ def __dir__():
     return sorted(set(globals().keys()) | set(__all__))
 
 if __lazy__:
-    from utils.mods.general import lazy, Message, some, every
+    from utils.mods.general import lazy, message, some, every

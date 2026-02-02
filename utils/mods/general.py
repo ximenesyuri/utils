@@ -113,7 +113,7 @@ some = Checker(any)
 every = Checker(all)
 
 @typed
-def Message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
+def message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
     if not kwargs:
         full_message = message
     else:
