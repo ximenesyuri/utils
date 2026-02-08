@@ -1,9 +1,9 @@
-from utils.mods.general import Message
+from utils.mods.general import message as _message
 
 class Exception(BaseException):
     def __init__(self, message="", **kwargs):
         if message or kwargs:
-            formatted_message = Message(message=message, **kwargs)
+            formatted_message = _message(message=message, **kwargs)
             super().__init__(formatted_message)
         else:
             super().__init__()

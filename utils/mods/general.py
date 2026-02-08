@@ -1,6 +1,28 @@
 import importlib
 import sys
 from typing import TYPE_CHECKING as __lsp__
+from typed import typed, Str, Maybe, Dict, Any
+from typed.types import Callable
+
+
+@typed
+def message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
+    if not kwargs:
+        full_message = message
+    else:
+        full_message = message.rstrip(":") + ":"
+        parts = [f"{k}={v!r}" for k, v in kwargs.items()]
+        full_message += " " + ", ".join(parts)
+        full_message += "."
+
+    if handler is None:
+        return full_message
+
+    if isinstance(handler, type) and issubclass(handler, BaseException):
+        raise handler(full_message)
+
+    handler(full_message)
+    return None
 
 def lazy(imports):
     caller_globals = sys._getframe(1).f_globals
