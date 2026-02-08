@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING as __lsp__
 
 __all__ = [
     'Exception',
+    'newerr',
     'AlreadyExists',     'NotExists',
     'AlreadSet',         'NotSet'
     'AlredyDefined',     'NotDefined',
@@ -10,12 +11,11 @@ __all__ = [
     'AlreadyConnected',  'NotConnected',
 
     'NotMatch', 'NotFound',
-    'WrongFormat',
-    'Failed'
 ]
 
 __lazy__ = {
     "Exception":         ("utils.mods.err", "Exception"),
+    "newerr":            ("utils.mods.err", "newerr"),
     "AlreadyExists":     ("utils.mods.err", "AlreadyExists"),
     "NotExists":         ("utils.mods.err", "NotExists"),
     "AlreadSet":         ("utils.mods.err", "AlreadySet"),
@@ -29,8 +29,6 @@ __lazy__ = {
 
     "NotMatch":          ("utils.mods.err", "NotMatch"),
     "NotFound":          ("utils.mods.err", "NotFound"),
-    "WrongFormat":       ("utils.mods.err", "WrongFormat"),
-    "Failed":            ("utils.mods.err", "Failed"),
 }
 
 def __getattr__(name):
@@ -51,12 +49,11 @@ def __dir__():
 if __lazy__:
     from utils.mods.err import (
         Exception,
+        newerr,
         AlreadyExists,     NotExists,
         AlreadySet,        NotSet,
         AlreadyDefined,    NotDefined,
         AlreadyRegistered, NotRegistered,
         AlreadyConnected,  NotConnected,
         NotMatch, NotFound,
-        WrongFormat,
-        Failed
     )

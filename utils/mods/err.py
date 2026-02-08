@@ -1,3 +1,4 @@
+from typed import typed, Str
 from utils.mods.general import message as _message
 
 class Exception(BaseException):
@@ -8,20 +9,21 @@ class Exception(BaseException):
         else:
             super().__init__()
 
-class AlreadySet(Exception): pass
-class AlreadyExists(Exception): pass
-class AlreadyRegistered(Exception): pass
-class AlreadyDefined(Exception): pass
-class AlreadyConnected(Exception): pass
+@typed
+def newerr(err: Str) -> type:
+    return type(err, (Exception,), {"__name__": err, "__display__": err})
 
-class NotSet(Exception): pass
-class NotExists(Exception): pass
-class NotRegistered(Exception): pass
-class NotDefined(Exception): pass
-class NotConnected(Exception): pass
+AlreadySet = newerr('AlreadySet')
+AlreadyExists = newerr('AlreadyExists')
+AlreadyRegistered = newerr('AlreadyRegistered')
+AlreadyDefined = newerr('AlreadyDefined')
+AlreadyConnected = newerr('AlreadyConnected')
 
-class NotMatch(Exception): pass
-class NotFound(Exception): pass
+NotSet = newerr('NotSet')
+NotExists = newerr('NotExists')
+NotRegistered = newerr('NotRegistered')
+NotDefined = newerr('NotDefined')
+NotConnected = newerr('NotConnected')
 
-class WrongFormat(Exception): pass
-class Failed(Exception): pass
+NotMatch = newerr('NotDefined')
+NotFound = newerr('NotConnected')

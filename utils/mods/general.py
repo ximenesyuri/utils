@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING as __lsp__
 from typed import typed, Str, Maybe, Dict, Any
 from typed.types import Callable
 
-
 @typed
 def message(message: Str="", handler: Maybe(Callable)=None, **kwargs: Dict(Str)) -> Any:
     if not kwargs:
