@@ -1,12 +1,12 @@
 [project]
 name = "utils"
-version = "0.3.0"
-description = "General typed utilities"
+version = "0.4.0"
+description = "General typed utilities to support typedsystem applications."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "BSD"}
 authors = [
-    {name = "Yuri Ximenes", email = "yx.dev@gmx.ie"},
+    {name = "Yuri Ximenes", email = "ximenesyuri@gmx.ie"},
 ]
 dependencies = [
     "typed @ git+https://github.com/ximenesyuri/typed"
