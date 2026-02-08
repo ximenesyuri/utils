@@ -9,7 +9,7 @@ __all__ = [
 
 __lazy__ = {
     "lazy":      ("utils.mods.general", "lazy"),
-    "message":   ("utils.mods.general", "Message"),
+    "message":   ("utils.mods.general", "message"),
     "some":      ("utils.mods.general", "some"),
     "every":     ("utils.mods.general", "every")
 }
