@@ -3,7 +3,6 @@ import re
 import sys
 import inspect
 from typed import Bool, Union, Regex, Filter, Null, Tuple, Int, Str, typed, Nill, List, Pattern
-from typed.types import Condition
 
 Path = Union(Regex(r"^/?(?:(?:[^/:\r\n*?\"<>|\\]+/)*[^/:\r\n*?\"<>|\\]+/?|/?)$"), Null(Str))
 
@@ -22,11 +21,11 @@ def _is_symlink(path: Path) -> Bool:
 def _is_mount(path: Path) -> Bool:
     return os.path.ismount(path)
 
-Exists  = Filter(Path, Condition(_exists))
-File    = Filter(Path, Condition(_is_file))
-Dir     = Filter(Path, Condition(_is_dir))
-Symlink = Filter(Path, Condition(_is_symlink))
-Mount   = Filter(Path, Condition(_is_mount))
+Exists  = Filter(Path, _exists)
+File    = Filter(Path, _is_file)
+Dir     = Filter(Path, _is_dir)
+Symlink = Filter(Path, _is_symlink)
+Mount   = Filter(Path, _is_mount)
 
 Path.__display__    = "Path"
 Exists.__display__  = "Exists"
