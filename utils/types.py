@@ -26,7 +26,7 @@ __lazy__ = {
     "HSVA":      ("utils.mods.color",           "HSVA"),
     "LCH":       ("utils.mods.color",           "LCH"),
     "Color":     ("utils.mods.color",           "Color"),
-    "ColorDistance": ("utils.mods.color",           "ColorDistance"),
+    "ColorDistance": ("utils.mods.color",       "ColorDistance"),
 
     "Env":       ("utils.mods.envs",            "Env"),
     "Module":    ("utils.mods.mod",             "Module"),

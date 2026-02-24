@@ -1,4 +1,4 @@
-from typed import typed, Prod, Range, Regex, Float, Typed, List, Tuple, Union
+from typed import typed, Prod, Range, Regex, Float, Typed, List, Tuple, Union, Enum, Str
 from math import sqrt, atan2, cos, sin, degrees, radians
 from utils.mods.helper.color import _clamp
 
@@ -15,6 +15,7 @@ LAB = Prod(Range(0, 100), Range(-128, 127), Range(-128, 127))
 LCH = Prod(Range(0, 100), Range(0, 180), Range(0, 360))
 
 Color = Union(RGB, HEX, HSL, HSV, XYZ, RGBA, HSVA, CMYK, LAB, LCH)
+ColorDistance = Enum(Str, "euclidean", "weighted", "delta", "hsv")
 
 RGB.__display__ = "RGB"
 HEX.__display__ = "HEX"
