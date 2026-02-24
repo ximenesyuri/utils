@@ -538,14 +538,14 @@ class color:
     class distance:
         @typed
         def euclidean(c1: HEX, c2: HEX) -> Float:
-            rgb1 = color.convert.hex_to_rgb(c1)
-            rgb2 = color.convert.hex_to_rgb(c2)
+            rgb1 = color.convert.hex.to_rgb(c1)
+            rgb2 = color.convert.hex.to_rgb(c2)
             return sqrt(sum((a - b) ** 2 for a, b in zip(rgb1, rgb2)))
 
         @typed
         def weighted(c1: HEX, c2: HEX) -> Float:
-            r1, g1, b1 = color.convert.hex_to_rgb(c1)
-            r2, g2, b2 = color.convert.hex_to_rgb(c2)
+            r1, g1, b1 = color.convert.hex.to_rgb(c1)
+            r2, g2, b2 = color.convert.hex.to_rgb(c2)
 
             return sqrt(
                 0.3 * (r1 - r2) ** 2 +
@@ -555,11 +555,11 @@ class color:
 
         @typed
         def delta(c1: HEX, c2: HEX) -> Float:
-            rgb1 = color.convert.hex_to_rgb(c1)
-            rgb2 = color.convert.hex_to_rgb(c2)
+            rgb1 = color.convert.hex.to_rgb(c1)
+            rgb2 = color.convert.hex.to_rgb(c2)
 
-            lab1 = color.convert.rgb_to_lab(rgb1)
-            lab2 = color.convert.rgb_to_lab(rgb2)
+            lab1 = color.convert.rgb.rgb_to_lab(rgb1)
+            lab2 = color.convert.rgb.rgb_to_lab(rgb2)
 
             L1, a1, b1 = lab1
             L2, a2, b2 = lab2
@@ -571,8 +571,8 @@ class color:
 
         @typed
         def hsv(c1: HEX, c2: HEX) -> Float:
-            hsv1 = color.convert.rgb_to_hsv(color.convert.hex_to_rgb(c1))
-            hsv2 = color.convert.rgb_to_hsv(color.convert.hex_to_rgb(c2))
+            hsv1 = color.convert.hex.to_hsv(c1)
+            hsv2 = color.convert.hex.to_hsv(c2)
 
             h1, S1, V1 = hsv1
             h2, S2, V2 = hsv2
