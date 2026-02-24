@@ -1,4 +1,4 @@
-from typed import typed, Prod, Range, Regex, Float, Typed, List, Union
+from typed import typed, Prod, Range, Regex, Float, Typed, List, Tuple, Union
 from math import sqrt, atan2, cos, sin, degrees, radians
 from utils.mods.helper.color import _clamp
 
@@ -587,3 +587,78 @@ class color:
                 (s1 - s2) ** 2 +
                 (v1 - v2) ** 2
             )
+
+    class average:
+        @typed
+        def euclidean(*colors: Tuple(HEX)) -> HEX:
+            if not colors:
+                raise ColorErr("color.average.euclidean requires at least one color")
+
+            rgbs = [color.convert.hex.to_rgb(c) for c in colors]
+            n = len(rgbs)
+            r_avg = int(round(sum(r for r, g, b in rgbs) / n))
+            g_avg = int(round(sum(g for r, g, b in rgbs) / n))
+            b_avg = int(round(sum(b for r, g, b in rgbs) / n))
+
+            return color.convert.rgb.to_hex((r_avg, g_avg, b_avg))
+
+        @typed
+        def weighted(*colors: Tuple(HEX)) -> HEX:
+            if not colors:
+                raise ColorErr("color.average.weighted requires at least one color")
+
+            rgbs = [color.convert.hex.to_rgb(c) for c in colors]
+            n = len(rgbs)
+            r_avg = int(round(sum(r for r, g, b in rgbs) / n))
+            g_avg = int(round(sum(g for r, g, b in rgbs) / n))
+            b_avg = int(round(sum(b for r, g, b in rgbs) / n))
+
+            return color.convert.rgb.to_hex((r_avg, g_avg, b_avg))
+
+        @typed
+        def delta(*colors: Tuple(HEX)) -> HEX:
+            if not colors:
+                raise ColorErr("color.average.delta requires at least one color")
+
+            labs = [color.convert.hex.to_lab(c) for c in colors]
+            n = len(labs)
+
+            L_avg = sum(L for L, a, b in labs) / n
+            a_avg = sum(a for L, a, b in labs) / n
+            b_avg = sum(b for L, a, b in labs) / n
+
+            lab_centroid = (L_avg, a_avg, b_avg)
+            return color.convert.lab.to_hex(lab_centroid)  # uses internal clamping
+
+        @typed
+        def hsv(*colors: Tuple(HEX)) -> HEX:
+            if not colors:
+                raise ColorErr("color.average.hsv requires at least one color")
+
+            hsvs = [color.convert.hex.to_hsv(c) for c in colors]
+            n = len(hsvs)
+
+            sum_cos = 0.0
+            sum_sin = 0.0
+            S_sum = 0.0
+            V_sum = 0.0
+
+            for H, S, V in hsvs:
+                rad = radians(H % 360)
+                sum_cos += cos(rad)
+                sum_sin += sin(rad)
+                S_sum += S
+                V_sum += V
+
+            if n == 1:
+                H_avg = hsvs[0][0]
+            else:
+                H_rad = atan2(sum_sin / n, sum_cos / n)
+                if H_rad < 0:
+                    H_rad += 2.0 * 3.141592653589793
+                H_avg = int(round(degrees(H_rad))) % 360
+
+            S_avg = _clamp(int(round(S_sum / n)), 0, 100)
+            V_avg = _clamp(int(round(V_sum / n)), 0, 100)
+
+            return color.convert.hsv.to_hex((H_avg, S_avg, V_avg))
