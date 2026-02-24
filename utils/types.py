@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING as __lsp__
 
 __all__ = [
     "Cron",
-    "HEX", "RGB", "HSL", "CMYK", "HSV", "LAB", "HSVA", "RGBA", "LCHab",
+    "HEX", "RGB", "HSL", "CMYK", "HSV", "LAB", "HSVA", "RGBA", "LCH", "Color", "ColorDistance",
     "Env", "Module", "Char", "Email",
     "Json", "Entry", "Table",
     "Path", "File", "Exists", "Dir", "Mount", "Symlink", "Extension", "PathUrl",
@@ -24,7 +24,9 @@ __lazy__ = {
     "LAB":       ("utils.mods.color",           "LAB"),
     "RGBA":      ("utils.mods.color",           "RGBA"),
     "HSVA":      ("utils.mods.color",           "HSVA"),
-    "LCHab":     ("utils.mods.color",         "LCHab"),
+    "LCH":       ("utils.mods.color",           "LCH"),
+    "Color":     ("utils.mods.color",           "Color"),
+    "ColorDistance": ("utils.mods.color",           "ColorDistance"),
 
     "Env":       ("utils.mods.envs",            "Env"),
     "Module":    ("utils.mods.mod",             "Module"),
@@ -83,7 +85,7 @@ def __dir__():
 
 if __lsp__:
     from utils.mods.cron   import Cron
-    from utils.mods.color  import HEX, RGB, HSL, CMYK, HSV, LAB, HSVA, RGBA, LCHab
+    from utils.mods.color  import HEX, RGB, HSL, CMYK, HSV, LAB, HSVA, RGBA, LCH, Color, ColorDistance
     from utils.mods.envs   import Env
     from utils.mods.json_  import Json, Entry, Table
     from utils.mods.path   import Path, File, Exists, Dir, Mount, Symlink
