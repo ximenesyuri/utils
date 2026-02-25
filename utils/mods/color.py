@@ -158,7 +158,7 @@ class color:
                 return (x, y, z)
 
             @typed
-            def rgb_to_lab(rgb: RGB) -> LAB:
+            def to_lab(rgb: RGB) -> LAB:
                 xyz = color.convert.rgb.to_xyz(rgb)
                 return color.convert.xyz.to_lab(xyz)
 
