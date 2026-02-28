@@ -562,8 +562,8 @@ class color:
             rgb1 = color.convert.hex.to_rgb(c1)
             rgb2 = color.convert.hex.to_rgb(c2)
 
-            lab1 = color.convert.rgb.rgb_to_lab(rgb1)
-            lab2 = color.convert.rgb.rgb_to_lab(rgb2)
+            lab1 = color.convert.rgb.rgb.to_lab(rgb1)
+            lab2 = color.convert.rgb.rgb.to_lab(rgb2)
 
             L1, a1, b1 = lab1
             L2, a2, b2 = lab2
