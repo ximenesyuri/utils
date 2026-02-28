@@ -1,10 +1,7 @@
 from functools import wraps
-from inspect import signature, Signature, Parameter, getsource
-from typed import typed, TYPE, Function, Tuple, Str, Dict, convert, Any
+from inspect import signature, Signature, getsource
+from typed import typed, TYPE, Function, Tuple, Str, Dict, Any
 from utils.mods.helper.func import _get_deps, _copy_func, _eval_func, _find_in_stack
-
-Signature = convert(Signature, TYPE)
-Parameter = convert(Parameter, TYPE)
 
 class FuncErr(Exception): pass
 
@@ -19,7 +16,7 @@ class func:
 
     class params:
         @typed
-        def __new__(self: Any, f: Function) -> Tuple(Parameter):
+        def __new__(self: Any, f: Function) -> Tuple:
             try:
                 return tuple(param for param in signature(f).parameters.values())
             except Exception as e:

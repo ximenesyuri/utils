@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING as __lsp__
 __all__ = [
     "Cron",
     "HEX", "RGB", "HSL", "CMYK", "HSV", "LAB", "HSVA", "RGBA", "LCH", "Color", "ColorDistance",
-    "Env", "Module", "Char", "Email",
+    "Env", "Char", "Email",
     "Json", "Entry", "Table",
     "Path", "File", "Exists", "Dir", "Mount", "Symlink", "Extension", "PathUrl",
     "Url", "Hostname",
@@ -29,7 +29,6 @@ __lazy__ = {
     "ColorDistance": ("utils.mods.color",       "ColorDistance"),
 
     "Env":       ("utils.mods.envs",            "Env"),
-    "Module":    ("utils.mods.mod",             "Module"),
 
     "Json":      ("utils.mods.json_",           "Json"),
     "Entry":     ("utils.mods.json_",           "Entry"),
@@ -95,4 +94,3 @@ if __lsp__:
     from utils.mods.helper.types import Char, Email, Extension, PathUrl
     from utils.mods.helper.http_ import Header, Params
     from utils.mods.http_ import Response, Data
-
