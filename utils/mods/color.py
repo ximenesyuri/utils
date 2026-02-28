@@ -1,4 +1,4 @@
-from typed import typed, Prod, Range, Regex, Float, Typed, List, Tuple, Union, Enum, Str
+from typed import typed, Prod, Interval, Range, Regex, Float, Typed, List, Tuple, Union, Enum, Str
 from math import sqrt, atan2, cos, sin, degrees, radians
 from utils.mods.helper.color import _clamp
 
@@ -11,7 +11,7 @@ XYZ = Prod(Float, 3)
 RGBA = Prod(Range(0, 255), 4)
 HSVA = Prod(Range(0, 360), Range(0, 100), Range(0, 100), Range(0, 100))
 CMYK = Prod(Range(0, 100), 4)
-LAB = Prod(Range(0, 100), Range(-128, 127), Range(-128, 127))
+LAB = Prod(Interval(Float, 0.0, 100.0), Interval(Float, -128.0, 127.0), Interval(Float, -128.0, 127.0))
 LCH = Prod(Range(0, 100), Range(0, 180), Range(0, 360))
 
 Color = Union(RGB, HEX, HSL, HSV, XYZ, RGBA, HSVA, CMYK, LAB, LCH)
