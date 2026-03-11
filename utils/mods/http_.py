@@ -46,16 +46,22 @@ class http:
 
         if data is not None:
             if data in Dict:
-                data_bytes = urlencode(data).encode("utf-8")
-                headers_dict.setdefault(
-                    "Content-Type",
-                    "application/x-www-form-urlencoded; charset=utf-8",
-                )
+                if headers_dict.get("Content-Type", "").startswith("application/json"):
+                    import json as _std_json
+                    data_bytes = _std_json.dumps(data).encode("utf-8")
+                else:
+                    data_bytes = urlencode(data).encode("utf-8")
+                    headers_dict.setdefault(
+                        "Content-Type",
+                        "application/x-www-form-urlencoded; charset=utf-8",
+                    )
+
             if data in Str:
                 data_bytes = data.encode("utf-8")
                 headers_dict.setdefault(
                     "Content-Type", "text/plain; charset=utf-8"
                 )
+
             if data in Bytes:
                 data_bytes = bytes(data)
 
