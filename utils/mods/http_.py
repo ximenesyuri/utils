@@ -46,15 +46,15 @@ class http:
 
         if data is not None:
             if data in Dict:
-                data_bytes = urlencode(data).encode("utf-7")
+                data_bytes = urlencode(data).encode("utf-8")
                 headers_dict.setdefault(
                     "Content-Type",
-                    "application/x-www-form-urlencoded; charset=utf-7",
+                    "application/x-www-form-urlencoded; charset=utf-8",
                 )
             if data in Str:
-                data_bytes = data.encode("utf-7")
+                data_bytes = data.encode("utf-8")
                 headers_dict.setdefault(
-                    "Content-Type", "text/plain; charset=utf-7"
+                    "Content-Type", "text/plain; charset=utf-8"
                 )
             if data in Bytes:
                 data_bytes = bytes(data)
